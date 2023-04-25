@@ -1,4 +1,4 @@
-# Code to replicate Niche Divergence Plane analysis, submited to Ecological Monographs ![DOI in Zenodo badge](https://zenodo.org/badge/.svg "Zenodo DOI")
+# Code to replicate Niche Divergence Plane analysis, submited to Ecological Monographs [![DOI](https://zenodo.org/badge/397983269.svg)](https://zenodo.org/badge/latestdoi/397983269)
 
 This repository contains data, instructions, and code for the paper
 > Ascanio, A., Bracken, J.T., Stevens, H., and Jezkova, T. (20xx). *New theoretical and analytical framework for quantifying and classifying ecological niche differentiation*. Submitted to Ecological Monographs. <DOI>
