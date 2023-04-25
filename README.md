@@ -1,40 +1,39 @@
-# ndplane: Niche Divergence Plane
-## Code to replicate Niche Divergence Plane analysis, submited to Ecological Monographs
+# Code to replicate Niche Divergence Plane analysis, submited to Ecological Monographs ![DOI in Zenodo badge](https://zenodo.org/badge/.svg "Zenodo DOI")
 
 This repository contains data, instructions, and code for the paper
 > Ascanio, A., Bracken, J.T., Stevens, H., and Jezkova, T. (20xx). *New theoretical and analytical framework for quantifying and classifying ecological niche differentiation* Submitted to Ecological Monographs. <DOI>
 
-### How to cite
+## How to cite
 
 Please, cite this compendium as:
 > Ascanio, A., Bracken, J.T., Stevens, H., and Jezkova, T. (20xx). *New theoretical and analytical framework for quantifying and classifying ecological niche differentiation - code companion* Submitted to Ecological Monographs. <DOI>
 
-### How to download
+## How to download
 
 You can download the compendium as a zip from from this URL:
 <https://github.com/luismmontilla/biomass/archive/master.zip>
 
-### Folder organization and Methods
+## Folder organization and Methods
 
 This repository contains three main subdirectories. Each of these directories represents a section of our analysis: 1) Theoretical simulations on the Niche Divergence Plane; 2) Virtual Species simulations on the Niche Divergence Plane; and 3) Niche Divergence Plane application using _Ambystoma maculatum_ and _A. opacum_ data
 
-#### Theoretical simulations on the Niche Divergence Plane (/NDP_Simulations)
+### Theoretical simulations on the Niche Divergence Plane (/NDP_Simulations)
 
 This directory contains the scripts to perform theoretical simulations following comparisons of 4-parameter Beta Function curves. These scripts are contained in /NDP_Simulations and should be able to run without any external data.
 
 
-##### Scripts and order of execution
+#### Scripts and order of execution
 
 1. **Simulate_NDP_Space_Parallel.R**: First, this scripts creates a parameter space for the 4-parameter Beta functions curve. Second, it contains a parallelized for-loop that compares all possible Beta function curves from the previously created parameter space. Niche Divergence Plane indices are derived from these comparisons (Niche Exclusivity and Niche Similarity). Each Beta curve creates a CSV file as an output, containing the Niche Divergence Plane indices and the parameters of each curve used for comparison. R functions for estimating the shape of the Beta function curves are contained in **BetaFunctions.R**
 2. **sim_merge_plots.R**: This scripts merges all CSV outputs from the previous script and combines them into a single data frame. This data frame is used to plot **Figure 3**
 
 These simulations are not heavy themselves, but their number increases rapidly with the number of parameter values added to the 4-parameter Beta curves used for comparison. For these reasons, a set of R and Shell scripts was used to run these simulations in the RedHawk Cluster (slurm) from Miami University. These scripts can be found in /NDP_Simulations/Batch_version
 
-#### Virtual Species simulations on the Niche Divergence Plane (/NDP_VirtualSpecies)
+### Virtual Species simulations on the Niche Divergence Plane (/NDP_VirtualSpecies)
 
 This directory contains the scripts to perform virtual species simulations and comparisons using the Niche Divergence Plane, and further comparisons to previous measurements of Niche Similarity (Hellinger's I and Schoener's D). 
 
-##### Data and settings
+#### Data and settings
 
 **Before running**: repository filesize limtis may prevent this script from executing, or it may take long to download. Before running, make sure that:
 
@@ -43,7 +42,7 @@ This directory contains the scripts to perform virtual species simulations and c
 
 These simulations can be more computationally intensive than the ones in the previous section. For these reasons, we used a smaller parameter space for our Beta function curves and prepare the scripts to be automatically ran in batch (for parallel processing in the RedHawk cluster at Miami University). 
 
-##### Scripts and order of execution
+#### Scripts and order of execution
 
  Located in /NDP_VirtualSpecies/rscripts
 
@@ -52,9 +51,9 @@ These simulations can be more computationally intensive than the ones in the pre
 3. **ggplot_virtualspecies_output.R**: This script merges the previous CSV outputs into one, and produces different exploratory plots, including **Figure 4** and supplementary **Figure S1**. It also performs the correlation assessment and statistical test that resulted in **Table 3**.
 
 
-#### Niche Divergence Plane application on _Ambystoma maculatum_ and _A. opacum_ (/NDP_Salamanders)
+### Niche Divergence Plane application on _Ambystoma maculatum_ and _A. opacum_ (/NDP_Salamanders)
 
-##### Data
+#### Data
 
 **Before running**: Due to github limits on filesize, environmental information was not uploaded to the repository. Follow these instructions first:
 
@@ -65,7 +64,7 @@ These simulations can be more computationally intensive than the ones in the pre
 
 Ambystoma occurrences were extracted from different sources, such as GBIF, HerpMapper, NA-HERPS, and personal communications with other researchers. Occurrences are located in /NDP_Salamanders/Data/Ambystoma
 
-##### Scripts and order of execution
+#### Scripts and order of execution
 
  Located in /NDP_Salamanders/Rscripts
 
