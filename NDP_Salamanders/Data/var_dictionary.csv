@@ -1,0 +1,32 @@
+Source,Variable,Meaning,Soil Profile Depth Range (cm)
+CHELSA,BIO01,Annual Mean Temperature,
+CHELSA,BIO2,Mean Diurnal Range,
+CHELSA,BIO3,Isothermality,
+CHELSA,BIO4,Temperature Seasonality,
+CHELSA,BIO5,Max Temperature of Warmest Month,
+CHELSA,BIO6,Min Temperature of Coldest Month,
+CHELSA,BIO7,Temperature Annual Range,
+CHELSA,BIO8,Mean Temperature of Wettest Quarter,
+CHELSA,BIO9,Mean Temperature of Driest Quarter,
+CHELSA,BIO10,Mean Temperature of Warmest Quarter,
+CHELSA,BIO11,Mean Temperature of Coldest Quarter,
+CHELSA,BIO12,Annual Precipitation,
+CHELSA,BIO13,Precipitation of Wettest Month,
+CHELSA,BIO14,Precipitation of Driest Month,
+CHELSA,BIO15,Precipitation Seasonality,
+CHELSA,BIO16,Precipitation of Wettest Quarter,
+CHELSA,BIO17,Precipitation of Driest Quarter,
+CHELSA,BIO18,Precipitation of Warmest Quarter,
+CHELSA,BIO19,Precipitation of Coldest Quarter,
+gNATSGO,ffd_r,Frost free days,
+gNATSGO,resdept_r,Depth to Any Soil Restricted Layer,
+gNATSGO,soimoistdept_r,Depth to water table,
+gNATSGO,awc_r,Available water capacity,0-200
+gNATSGO,aws.x,Available water Storage,0-200
+gNATSGO,aws.y,Available water Supply,0-200
+gNATSGO,dbthirdbar_r,Bulk desnity (soil compaction) - 1/3 Bar,0-200
+gNATSGO,dbovendry_r,Bulk desnity (soil compaction),0-200
+gNATSGO,om_r,Organic Matter,0-200
+gNATSGO,claytotal_r,Percent Clay,0-200
+gNATSGO,sandtotal_r,Percent Sand,0-200
+gNATSGO,silttotal_r,Percent Silt,0-200

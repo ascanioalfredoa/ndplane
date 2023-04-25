@@ -1,17 +1,17 @@
 # Code to replicate Niche Divergence Plane analysis, submited to Ecological Monographs ![DOI in Zenodo badge](https://zenodo.org/badge/.svg "Zenodo DOI")
 
 This repository contains data, instructions, and code for the paper
-> Ascanio, A., Bracken, J.T., Stevens, H., and Jezkova, T. (20xx). *New theoretical and analytical framework for quantifying and classifying ecological niche differentiation* Submitted to Ecological Monographs. <DOI>
+> Ascanio, A., Bracken, J.T., Stevens, H., and Jezkova, T. (20xx). *New theoretical and analytical framework for quantifying and classifying ecological niche differentiation*. Submitted to Ecological Monographs. <DOI>
 
 ## How to cite
 
 Please, cite this compendium as:
-> Ascanio, A., Bracken, J.T., Stevens, H., and Jezkova, T. (20xx). *New theoretical and analytical framework for quantifying and classifying ecological niche differentiation - code companion* Submitted to Ecological Monographs. <DOI>
+> Ascanio, A., Bracken, J.T., Stevens, H., and Jezkova, T. (20xx). *Supplementary Code to New theoretical and analytical framework for quantifying and classifying ecological niche differentiation* Submitted to Ecological Monographs. <DOI>
 
 ## How to download
 
 You can download the compendium as a zip from from this URL:
-<https://github.com/luismmontilla/biomass/archive/master.zip>
+<https://github.com/ascanioalfredoa/ndplane/archive/master.zip>
 
 ## Folder organization and Methods
 
