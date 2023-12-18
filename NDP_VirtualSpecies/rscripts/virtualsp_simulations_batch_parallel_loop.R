@@ -32,7 +32,7 @@ sp1 = sp2 <- 1:nrow(par_space)
 results_names <- c("spA_par", "spB_par", "Dissimilarity", "Exclusivity", "D", "I",
                    paste(names(par_space), "_A", sep = ""),
                    paste(names(par_space), "_B", sep = ""),
-		   ND_magnitude, ND_angle
+		   "ND_magnitude", "ND_angle"
 )
 
 results <- as.data.frame(array(data = 0, 
