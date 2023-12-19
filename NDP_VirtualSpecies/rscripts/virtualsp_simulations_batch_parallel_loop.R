@@ -19,9 +19,9 @@ if(!dir.exists("data/wc")) {
 }
 
 worldclim <- list.files("data/wc/wc2.1_5m_bio", full.names = T)
-worldclim <- stack(worldclim)
+worldclim <- rast(worldclim)
 names(worldclim) <- gsub("wc2.1_5m|_", "", names(worldclim))
-worldclim <- crop(worldclim, extent(-170, -55, 25, 70))
+worldclim <- crop(worldclim, ext(-170, -55, 25, 70))
 
 #### Read parameter space ####
 par_space <- read_csv("output/virtualsp_Beta_Parameter_Space.csv")
@@ -50,18 +50,26 @@ registerDoParallel(cl)
 dir.create("output/virtualspecies_sim_output_v2")
 
 ########################### LOOP ##########################################
-no_nodes <- 8
-node_i <- as.numeric(Sys.getenv("SLURM_ARRAY_TASK_ID"))
-node_i
+#no_nodes <- 8
+#node_i <- as.numeric(Sys.getenv("SLURM_ARRAY_TASK_ID"))
+#node_i
 
-current_time <- Sys.time()
-foreach(i = sp1[round(seq(node_i, nrow(par_space), no_nodes))], .packages = c("tidyverse", "pracma", "virtualspecies"))  %dopar% {
-#foreach(i = sp1, .packages = c("tidyverse", "pracma", "virtualspecies"))  %dopar% {
+#current_time <- Sys.time()
+#foreach(i = sp1[round(seq(node_i, nrow(par_space), no_nodes))], .packages = c("tidyverse", "pracma", "virtualspecies"))  %dopar% {
+foreach(i = sp1, .packages = c("tidyverse", "pracma", "virtualspecies"))  %dopar% {
     #### Set working directory ####
-    setwd("")    
+    #setwd("")    
     source("rscripts/BetaFunctions.R")
     source("rscripts/virtualsp_functions.R")
     
+    #### Terra does not allow paralellization of SpatRasters or SpatVectors
+    #I'll load the rasters inside the foreach loop
+    worldclim <- list.files("data/wc/wc2.1_5m_bio", full.names = T)
+    worldclim <- rast(worldclim)
+    names(worldclim) <- gsub("wc2.1_5m|_", "", names(worldclim))
+    worldclim <- crop(worldclim, ext(-170, -55, 25, 70))
+    
+    #####
     file <- paste("output/virtualspecies_sim_output_v2/BetaSimulation_Results", "_spA_", i, ".csv", sep = "")
     
     #### Generate virtual species 1 ####
@@ -126,8 +134,10 @@ foreach(i = sp1[round(seq(node_i, nrow(par_space), no_nodes))], .packages = c("t
         
         A <- responses[, c(1, 2)][responses[, 2] > 0, ]
         names(A)[2] <- "y"
+        A <- unique(A)
         B <- responses[, c(1, 3)][responses[, 3] > 0, ]
         names(B)[2] <- "y"
+        B <- unique(B)
         
         C <- 
             A[A$x %in% B$x, ] %>%

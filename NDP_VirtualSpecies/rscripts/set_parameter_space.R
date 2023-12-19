@@ -19,9 +19,9 @@ if(!dir.exists("data/wc")) {
 }
 
 worldclim <- list.files("data/wc/wc2.1_5m_bio", full.names = T)
-worldclim <- stack(worldclim)
+worldclim <- rast(worldclim)
 names(worldclim) <- gsub("wc2.1_5m|_", "", names(worldclim))
-worldclim <- crop(worldclim, extent(-170, -55, 25, 70))
+worldclim <- crop(worldclim, ext(-170, -55, 25, 70))
 
 # Set parameter domains for changing response curve
 a = b <- round(seq(10, 35, 1), 1)
