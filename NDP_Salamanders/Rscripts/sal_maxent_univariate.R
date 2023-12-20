@@ -5,10 +5,12 @@ library(terra)
 library(tidyverse)
 library(tidyterra)
 library(ENMTools)
+source("Rscripts/thin_records.R")
 
 #------------------------------------------------------------------------------#
 #################### Load and clean Occurrences and basemap ####################
 #------------------------------------------------------------------------------#
+
 ##### Load thinned occurrences ####
 sal_thin <- vect("Data/Ambystoma/Amb_macmar_thin.shp")
 
@@ -67,16 +69,30 @@ all_sa %>%
 
 # Load all ambystoma occurrences
 all_am <- vect("Data/Ambystoma/Full_WGS84.shp")
+
+# Filter by study areas
+all_am <- terra::intersect(all_am, all_sa)
+
+
+# For each species, subset TGS that does not contain them
+spo_tgs <- all_am %>%
+    filter(!(Cmmn_Nm %in% "Spotted Salamander"))
+mar_tgs <- all_am %>%
+    filter(!(Cmmn_Nm %in% "Marbled Salamander"))
+
+
+#Thin TGS occurrences
+all_amt <- 
+    all_am %>% 
+    #terra::split(f = "Cmmn_Nm") %>%
+    lapply(FUN = function(x) thin_records(x, thin.par = 10, reps = 10)) #%>%
+    #do.call(rbind, .)
+
 all_sa %>%
     ggplot() +
     geom_spatvector() +
-    geom_spatvector(data = all_am, aes(color = Cmmn_Nm)) +
+    geom_spatvector(data = mar_tgs, aes(color = Cmmn_Nm)) +
     xlim(ext(all_sa)[1:2]) + ylim(ext(all_sa)[3:4])
-
-# Filter by study areas
-
-# For each species, subset TGS that does not contain them
-# Check whether TGS occurrences were previously thinned, if not, thin them. 
 
 # Save TGS as background points
 
