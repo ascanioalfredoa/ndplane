@@ -81,6 +81,9 @@ spo_tgs <- all_am %>%
 mar_tgs <- all_am %>%
     filter(!(Cmmn_Nm %in% "Marbled Salamander"))
 
+# If available, load pre-loaded thinned TGS
+spo_tgs_t <- vect("Data/Ambystoma/spo_tgs_t.shp")
+mar_tgs_t <- vect("Data/Ambystoma/mar_tgs_t.shp")
 
 #Thin TGS occurrences
 spo_tgs_t <- spo_tgs %>%
@@ -94,16 +97,23 @@ mar_tgs_t <- mar_tgs %>%
     lapply(FUN = function(x) thin_records(x, thin.par = 10, reps = 10)) %>%
     do.call(rbind, .)
 mar_tgs_t <- thin_records(mar_tgs_t, thin.par = 10, reps = 10)
-    
+
+# Save TGS as background points
+writeVector(mar_tgs_t, filename = "Data/Ambystoma/mar_tgs_t.shp")
+writeVector(spo_tgs_t, filename = "Data/Ambystoma/spo_tgs_t.shp")
+
+# Check thinned TGS points across the study area    
 all_sa %>%
     ggplot() +
     geom_spatvector() +
     geom_spatvector(data = spo_tgs_t, aes(color = Cmmn_Nm)) +
     xlim(ext(all_sa)[1:2]) + ylim(ext(all_sa)[3:4])
 
-# Save TGS as background points
-writeVector(mar_tgs_t, filename = "Data/Ambystoma/mar_tgs_t.shp")
-writeVector(spo_tgs_t, filename = "Data/Ambystoma/spo_tgs_t.shp")
+all_sa %>%
+    ggplot() +
+    geom_spatvector() +
+    geom_spatvector(data = spo_tgs_t, aes(color = Cmmn_Nm)) +
+    xlim(ext(all_sa)[1:2]) + ylim(ext(all_sa)[3:4])
 
 #------------------------------------------------------------------------------#
 ################# Load and clean environmental chelsa data #####################
@@ -141,14 +151,42 @@ data <- data[complete.cases(data),]
 pa <- data$pa
 envdat <- data[, -1]
 
-#### Run univariate ENMeval using a combination of features up to cubic ####
-#Running maxnet
-mdat <- data.frame(var = envdat[1], var2 = envdat[1]^2)
-m <- maxnet(p = pa, data = mdat, f = maxnet.formula(p = pa, data = mdat, classes = "l"))
-m1 <- maxnet(p = pa, data = envdat, f = formula(~ bio1 + I(bio1^2) - 1))
+#### Run univariate ENMTools using default enmtools.maxent configuration with appropriate background points####
 
-enmtools.maxent()
-predict(m1, chelsa_bioclim)
+#### Create enmtools.species objects ####
+mar_et <- enmtools.species(range = mask(chelsa_bioclim, mar_sa), 
+                 presence.points = mar, 
+                 background.points = mar_tgs_t, 
+                 species.name = "Marbled")
+
+spo_et <- enmtools.species(range = mask(chelsa_bioclim, spo_sa), 
+                 presence.points = spo, 
+                 background.points = spo_tgs_t, 
+                 species.name = "Spotted")
+
+#options(java.parameters = "-Xmx512m") #Default java memory
+#options()$java.parameters
+#options(java.parameters = "-Xmx36g") 
+
+#### Running maxent models ####
+mar_mx <- enmtools.maxent(mar_et, env = chelsa_bioclim[[1]], bg.source = "points")
+spo_mx <- enmtools.maxent(spo_et, env = chelsa_bioclim[[1]], bg.source = "points")
+
+#### Calculate D and I from maxent results ####
+mx_sim <- raster.overlap(mar_mx, spo_mx) %>% do.call(cbind, .)
+
+#### Extracting suitability response curves from maxent models ####
+mar_res <- mar_mx$response.plots[[1]]$data %>% filter(source == "Suitability")
+spo_res <- spo_mx$response.plots[[1]]$data %>% filter(source == "Suitability")
+
+#### Calculate niche divergence plane indices from maxent response curves ####
+
+
+A$bio1
+B$bio1
+A$bio1$data
+B$bio1$data
+
 # This would allow mean, variance, and skewness to be part of each response
 # What should I do about the regularization multiplier? r.m.
 # How do I pick the best univariate model?
