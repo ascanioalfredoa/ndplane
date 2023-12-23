@@ -7,7 +7,8 @@ library(tidyterra)
 library(maxnet)
 library(ENMTools)
 source("Rscripts/thin_records.R")
-
+source("Rscripts/enmtools_helper_functions.R")
+source("Rscripts/mx_ndp_function.R")
 #------------------------------------------------------------------------------#
 #################### Load and clean Occurrences and basemap ####################
 #------------------------------------------------------------------------------#
@@ -153,44 +154,42 @@ envdat <- data[, -1]
 
 #### Run univariate ENMTools using default enmtools.maxent configuration with appropriate background points####
 
+
 #### Create enmtools.species objects ####
 mar_et <- enmtools.species(range = mask(chelsa_bioclim, mar_sa), 
-                 presence.points = mar, 
-                 background.points = mar_tgs_t, 
-                 species.name = "Marbled")
+                           presence.points = mar, 
+                           background.points = mar_tgs_t, 
+                           species.name = "Marbled")
 
 spo_et <- enmtools.species(range = mask(chelsa_bioclim, spo_sa), 
-                 presence.points = spo, 
-                 background.points = spo_tgs_t, 
-                 species.name = "Spotted")
+                           presence.points = spo, 
+                           background.points = spo_tgs_t, 
+                           species.name = "Spotted")
 
+ind_res <- NULL
+plot_res <- NULL
+
+for(i in 1:length(names(chelsa_bioclim))) {
+    
 #options(java.parameters = "-Xmx512m") #Default java memory
 #options()$java.parameters
 #options(java.parameters = "-Xmx36g") 
 
 #### Running maxent models ####
-mar_mx <- enmtools.maxent(mar_et, env = chelsa_bioclim[[1]], bg.source = "points")
-spo_mx <- enmtools.maxent(spo_et, env = chelsa_bioclim[[1]], bg.source = "points")
+mar_mx <- enmtools.maxent(mar_et, env = chelsa_bioclim[[i]], bg.source = "points")
+spo_mx <- enmtools.maxent(spo_et, env = chelsa_bioclim[[i]], bg.source = "points")
 
 #### Calculate D and I from maxent results ####
 mx_sim <- raster.overlap(mar_mx, spo_mx) %>% do.call(cbind, .)
 
-#### Extracting suitability response curves from maxent models ####
-mar_res <- mar_mx$response.plots[[1]]$data %>% filter(source == "Suitability")
-spo_res <- spo_mx$response.plots[[1]]$data %>% filter(source == "Suitability")
-
 #### Calculate niche divergence plane indices from maxent response curves ####
+ndp_sim <- maxent_ndp(mx_sp1 = mar_mx, mx_sp2 = spo_mx, cut_off = 0.95)
 
+ind_res <- rbind(ind_res, cbind(ndp_sim$indices, mx_sim))
+plot_res <- rbind(plot_res, ndp_sim$response_curves)
 
-A$bio1
-B$bio1
-A$bio1$data
-B$bio1$data
-
-# This would allow mean, variance, and skewness to be part of each response
-# What should I do about the regularization multiplier? r.m.
-# How do I pick the best univariate model?
-
+gc()
+}
 #### Build loop around univariate maxent model selection to pick best model for our purposes, if possible ####
 # Loop should go through each environmental variable (bio/NATSGO)
 
