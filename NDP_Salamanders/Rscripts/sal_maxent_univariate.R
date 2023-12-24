@@ -190,6 +190,9 @@ plot_res <- rbind(plot_res, ndp_sim$response_curves)
 
 gc()
 }
+
+write.csv(ind_res, "Results/NDP_salamander_values.csv")
+write_rds(plot_res, "Results/NDP_Salamanders_ResponseCurves.rds")
 #### Build loop around univariate maxent model selection to pick best model for our purposes, if possible ####
 # Loop should go through each environmental variable (bio/NATSGO)
 
