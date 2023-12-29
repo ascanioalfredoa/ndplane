@@ -242,7 +242,7 @@ for(i in 1:length(names(soil_ras))) {
     #Given the size of the soil rasters, I'll load one by one and delete from memory at the end
     #options(java.parameters = "-Xmx512m") #Default java memory
     #options()$java.parameters
-    #options(java.parameters = "-Xmx56g") 
+    #options(java.parameters = "-Xmx40g") 
     
     #### Running maxent models ####
     mar_mx <- enmtools.maxent(mar_et_n83, env = soil_ras[[i]], bg.source = "points")
