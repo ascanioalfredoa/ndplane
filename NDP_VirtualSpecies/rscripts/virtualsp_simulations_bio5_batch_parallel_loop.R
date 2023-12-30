@@ -56,7 +56,8 @@ dir.create("output/virtualspecies_bio5_sim_output")
 
 current_time <- Sys.time()
 #foreach(i = sp1[round(seq(node_i, nrow(par_space), no_nodes))], .packages = c("tidyverse", "pracma", "virtualspecies"))  %dopar% {
-foreach(i = sp1, .packages = c("tidyverse", "pracma", "virtualspecies"))  %dopar% {
+#foreach(i = sp1, .packages = c("tidyverse", "pracma", "virtualspecies"))  %dopar% {
+foreach(i = 1810:1818, .packages = c("tidyverse", "pracma", "virtualspecies"))  %dopar% {
     #### Set working directory ####
     #setwd("")    
     source("rscripts/BetaFunctions.R")
