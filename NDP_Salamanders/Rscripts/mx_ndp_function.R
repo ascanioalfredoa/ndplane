@@ -1,5 +1,6 @@
 maxent_ndp <- function(mx_sp1, mx_sp2, cut_off = 0.95) {
     library(pracma)
+    library(zoo)
     # Save variable name
     var <- unique(names(mx_sp1$response.plots)[[1]], names(mx_sp1$response.plots)[[1]])
     
