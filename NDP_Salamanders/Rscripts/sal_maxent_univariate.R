@@ -188,89 +188,10 @@ ndp_sim <- maxent_ndp(mx_sp1 = mar_mx, mx_sp2 = spo_mx, cut_off = 0.95)
 
 ind_res <- rbind(ind_res, cbind(ndp_sim$indices, mx_sim))
 plot_res <- rbind(plot_res, ndp_sim$response_curves)
-
+print(i)
 gc()
 }
 
-write.csv(ind_res, "Results/NDP_salamander_values.csv")
-write_rds(plot_res, "Results/NDP_Salamanders_ResponseCurves.rds")
-
-#### Build loop around univariate maxent model selection to pick best model for our purposes, if possible ####
-# Loop should go through each environmental variable (NATSGO)
-
-#### Build loop around univariate maxent model selection to pick best model for our purposes, if possible ####
-# Loop should go through each environmental variable (bio)
-
-#### Create enmtools.species objects ####
-#ind_res <- NULL
-#plot_res <- NULL
-
-#Find soil files
-soil_names <- list.files("D:/envdata/gNatsgo/Ambystoma_NDP_studyarea/", pattern = ".tif$")
-soil_files <- list.files("D:/envdata/gNatsgo/Ambystoma_NDP_studyarea/", pattern = ".tif$", full.names = T)
-
-#Load soil rasters
-soil_ras <- rast(soil_files)
-
-#Clean soil names
-names(soil_ras) <- gsub("SoilRas_|_30Meter", "", names(soil_ras))
-
-#Project all salamander study areas and points into NAD83 (matching soils)
-all_sa_nad83 <- project(all_sa, soil_ras)
-mar_sa_nad83 <- project(mar_sa, soil_ras)
-spo_sa_nad83 <- project(spo_sa, soil_ras)
-mar_nad83 <- project(mar, soil_ras)
-spo_nad83 <- project(spo, soil_ras)
-mar_tgs_t_nad83 <- project(mar_tgs_t, soil_ras)
-spo_tgs_t_nad83 <- project(spo_tgs_t, soil_ras)
-
-
-soil_ras <- crop(soil_ras, all_sa_nad83, mask = TRUE)
-
-mar_et_n83 <- enmtools.species(range = crop(soil_ras, mar_sa_nad83, mask = TRUE), 
-                               presence.points = mar_nad83, 
-                               background.points = mar_tgs_t_nad83, 
-                               species.name = "Marbled")
-gc()
-spo_et_n83 <- enmtools.species(range = crop(soil_ras, spo_sa_nad83, mask = TRUE), 
-                               presence.points = spo_nad83, 
-                               background.points = spo_tgs_t_nad83, 
-                               species.name = "Spotted")
-gc()
-
-for(i in 1:length(names(soil_ras))) {
-    #Given the size of the soil rasters, I'll load one by one and delete from memory at the end
-    #options(java.parameters = "-Xmx512m") #Default java memory
-    #options()$java.parameters
-    #options(java.parameters = "-Xmx40g") 
-    
-    #### Running maxent models ####
-    mar_mx <- enmtools.maxent(mar_et_n83, env = soil_ras[[i]], bg.source = "points")
-    gc()
-    spo_mx <- enmtools.maxent(spo_et_n83, env = soil_ras[[i]], bg.source = "points")
-    gc()
-    
-    #### Calculate D and I from maxent results ####
-    mx_sim <- raster.overlap(mar_mx, spo_mx) %>% do.call(cbind, .)
-    
-    #### Calculate niche divergence plane indices from maxent response curves ####
-    ndp_sim <- maxent_ndp(mx_sp1 = mar_mx, mx_sp2 = spo_mx, cut_off = 0.95)
-    
-    ind_res <- rbind(ind_res, cbind(ndp_sim$indices, mx_sim))
-    plot_res <- rbind(plot_res, ndp_sim$response_curves)
-    
-    gc()
-    print(i)
-}
-
-write.csv(ind_res, "Results/NDP_salamander_values2.csv")
+write.csv(ind_res, "Results/NDP_salamander_values2.csv", row.names = F)
 write_rds(plot_res, "Results/NDP_Salamanders_ResponseCurves2.rds")
 
-
-#------------------------------------------------------------------------------#
-#################### Environmental Similarity - MOP ############################
-#------------------------------------------------------------------------------#
-
-#### Check for unique environments using MOP ####
-#Should this be univariate or with all the environmental vars?
-# Both and see?

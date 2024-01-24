@@ -158,6 +158,7 @@ spo_tgs_t_nad83 <- project(spo_tgs_t, soil_ras)
 # Sys.time()
 
 soil_ras_ag34_mean <- rast(list.files("Data/NATSGO/Aggregated13", full.names = T, pattern = ".tif$"))
+names(soil_ras_ag34_mean) <- unlist(lapply(str_split(names(soil_ras_ag34_mean), "_"), function(x) x[[1]]))
 
 mar_et_n83 <- enmtools.species(range = crop(soil_ras_ag34_mean, mar_sa_nad83, mask = TRUE), 
                                presence.points = mar_nad83, 
