@@ -25,10 +25,18 @@ maxent_ndp <- function(mx_sp1, mx_sp2, cut_off = 0.95) {
     # And where the values of Y are the lowest between the two possibilities
     
     C <- 
-        A[A[, 1] %in% B[, 1], ] %>%
-        left_join(B[B[, 1] %in% A[, 1], ], by = "layer", suffix = c("_a", "_b")) %>%
+        #A[A[, 1] %in% B[, 1], ] %>%
+        A[A[, 1] >= min(B[, 1]) & A[, 1] <= max(B[, 1]), 1:3] %>%
+        #left_join(B[B[, 1] %in% A[, 1], ], by = "layer", suffix = c("_a", "_b")) %>%
+        full_join(B[B[, 1] >= min(A[, 1]) & B[, 1] <= max(A[, 1]), 1:3], by = "layer") %>% 
+        #rbind(B[B[, 1] > min(A[, 1]) & B[, 1] < max(A[, 1]), ]) %>% 
+        arrange(layer) %>% 
+        mutate(value.x = na.approx(value.x, x = layer, na.rm = F)) %>%
+        mutate(value.y = na.approx(value.y, x = layer, na.rm = F)) %>% 
+        dplyr::select(1, 2, 4) %>%
+        filter(complete.cases(.)) %>%
         #rename(!!(.[["Source_a"]] %>% unique()) := y_a, !!(.[["Source_b"]] %>% unique()) := y_b) %>%
-        dplyr::select(1, 2, 5) %>% 
+        #dplyr::select(1, 2, 5) %>% 
         pivot_longer(cols = 2:3, names_to = "source_curve", values_to = "y") %>%
         group_by(layer) %>%
         summarise(y = min(y))
