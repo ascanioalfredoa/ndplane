@@ -10,11 +10,11 @@ library(ggrepel)
 #library(cowplot)
 
 #### Read NDP data ####
-rc <- read_rds("Results/NDP_Salamanders_ResponseCurves.rds")
-rc <- rbind(rc, read_rds("Results/NDP_Salamanders_ResponseCurves_soil_ag26.rds"))
+rc <- read_rds("Results/NDP_Salamanders_ResponseCurves2.rds")
+rc <- rbind(rc, read_rds("Results/NDP_Salamanders_ResponseCurves_soil_ag13.rds"))
 
-ndp <- read_csv("Results/NDP_salamander_values.csv")
-ndp <- rbind(ndp, read_csv("Results/NDP_salamander_values_soil_ag26.csv")[, -1])
+ndp <- read_csv("Results/NDP_salamander_values2.csv")
+ndp <- rbind(ndp, read_csv("Results/NDP_salamander_values_soil_ag13.csv")[, -1])
 
 #### Add type of climatic variable to variables ####
 rc$vartype <- ifelse(rc$var %in% paste("bio", 1:11, sep = ""), yes = "Temperature",
