@@ -243,7 +243,7 @@ p5 <- ggpairs(ndp %>% filter(!var %in% c("bio8", "bio9")),
     scale_fill_manual("Variable type", values = c("#62A39F", "#000000", "#2F8745")) +
     scale_shape_manual("Variable type", values = c(21, 22, 23)) +
     theme_bw() +
-    theme(text = element_text(size = 18),
+    theme(text = element_text(size = 22),
           legend.position = "bottom")
 
 png("Figures/NicheDiv_DI_comparison.png", width = 11000, height = 9000, res = 600)
