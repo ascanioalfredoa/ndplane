@@ -62,6 +62,7 @@ p1
 
 #### Plot NDP ###
 p2 <- ndp %>%
+    filter(!var %in% c("bio8", "bio9")) %>%
     ggplot(aes(x = exclusivity, y = dissimilarity, label = var, fill = vartype, 
                shape = vartype)) +
     xlim(0, 1) + ylim(0, 1) +
@@ -230,9 +231,10 @@ dev.off()
 
 #### Correlation between empirical Dissimilarity/Exclusivity and D/I ####
 library(GGally)
-pairs(ndp[, c(1:2, 4:5)])
 
-ggpairs(ndp, 
+
+
+p5 <- ggpairs(ndp %>% filter(!var %in% c("bio8", "bio9")), 
         columns = c(1, 2, 4, 5), 
         aes(label = var, fill = vartype, shape = vartype),
         upper = list(continuous = wrap("cor", size = 18)), 
@@ -243,6 +245,10 @@ ggpairs(ndp,
     theme_bw() +
     theme(text = element_text(size = 18),
           legend.position = "bottom")
+
+png("Figures/NicheDiv_DI_comparison.png", width = 11000, height = 9000, res = 600)
+p5
+dev.off()
 
 cor(ndp[, c(1:2, 4:5)])
 cor.test(ndp$dissimilarity, ndp$D)
