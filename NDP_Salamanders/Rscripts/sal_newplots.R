@@ -69,7 +69,7 @@ p2 <- ndp %>%
     geom_hline(yintercept = 0.5) +
     geom_vline(xintercept = 0.5) +
     geom_point(size = 6, alpha = 0.8) +
-    geom_text_repel(size = 5) +
+    geom_text_repel(size = 8) +
     scale_fill_manual("Variable type", 
                       values = c("#62A39F", "#000000", "#2F8745")) +
     theme_bw() +
@@ -145,15 +145,16 @@ gt <- arrangeGrob(p1 + theme(legend.text = element_text(size = 14)) +
                   layout_matrix = rbind(c(1, 1, 3, 3, 3, 3, 3),
                                         c(1, 1, 3, 3, 3, 3, 3),
                                         c(1, 1, 3, 3, 3, 3, 3),
-                                        c(NA, 2, 2, 2, 2, 2, NA),
-                                        c(NA, 2, 2, 2, 2, 2, NA),
-                                        c(NA, 2, 2, 2, 2, 2, NA),
-                                        c(NA, 2, 2, 2, 2, 2, NA)))
+                                        c(2, 2, 2, 2, 2, 2, 2),
+                                        c(2, 2, 2, 2, 2, 2, 2),
+                                        c(2, 2, 2, 2, 2, 2, 2),
+                                        c(2, 2, 2, 2, 2, 2, 2),
+                                        c(2, 2, 2, 2, 2, 2, 2)))
 
 # Add labels to the arranged plots
 p <- as_ggplot(gt) +                                # transform to a ggplot
     draw_plot_label(label = c("A)", "B)", "C)"), size = 20,
-                    x = c(-0.005, 0.30, 0.14), y = c(1, 1, 0.58)) # Add labels
+                    x = c(-0.005, 0.30, -0.005), y = c(1, 1, 0.62)) # Add labels
 #x = c(-0.005, 0.49, 0.49), y = c(1, 1, 0.5)) # Add labels
 #x = c(-0.005, -0.005, -0.005), y = c(1, 2, 3)) # Add labels
 p
@@ -217,3 +218,34 @@ p4 <-
     theme(legend.position = "top")
 p4
 
+
+pdf("Figures/Amacopac_AllResponses.pdf", width = 19, height = 15)
+p4
+dev.off()
+
+png("Figures/Amacopac_AllResponses.png", width = 11000, height = 9000, res = 600)
+p4
+dev.off()
+
+
+#### Correlation between empirical Dissimilarity/Exclusivity and D/I ####
+library(GGally)
+pairs(ndp[, c(1:2, 4:5)])
+
+ggpairs(ndp, 
+        columns = c(1, 2, 4, 5), 
+        aes(label = var, fill = vartype, shape = vartype),
+        upper = list(continuous = wrap("cor", size = 18)), 
+        lower = list(continuous = wrap("points", size = 3)), 
+        legends = T) +
+    scale_fill_manual("Variable type", values = c("#62A39F", "#000000", "#2F8745")) +
+    scale_shape_manual("Variable type", values = c(21, 22, 23)) +
+    theme_bw() +
+    theme(text = element_text(size = 18),
+          legend.position = "bottom")
+
+cor(ndp[, c(1:2, 4:5)])
+cor.test(ndp$dissimilarity, ndp$D)
+cor.test(ndp$dissimilarity, ndp$I)
+cor.test(ndp$exclusivity, ndp$D)
+cor.test(ndp$exclusivity, ndp$I)
