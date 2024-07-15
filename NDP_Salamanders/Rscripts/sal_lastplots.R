@@ -18,11 +18,11 @@ ndp <- rbind(ndp, read_csv("Results/NDP_salamander_values_soil_ag13.csv")[, -1])
 
 #### Add type of climatic variable to variables ####
 rc$vartype <- ifelse(rc$var %in% paste("bio", 1:11, sep = ""), yes = "Temperature",
-       no = ifelse(rc$var %in% paste("bio", 12:19, sep = ""), yes = "Precipitation",
-                   no = "Soil"))
-ndp$vartype <- ifelse(ndp$var %in% paste("bio", 1:11, sep = ""), yes = "Temperature",
-                     no = ifelse(ndp$var %in% paste("bio", 12:19, sep = ""), yes = "Precipitation",
+                     no = ifelse(rc$var %in% paste("bio", 12:19, sep = ""), yes = "Precipitation",
                                  no = "Soil"))
+ndp$vartype <- ifelse(ndp$var %in% paste("bio", 1:11, sep = ""), yes = "Temperature",
+                      no = ifelse(ndp$var %in% paste("bio", 12:19, sep = ""), yes = "Precipitation",
+                                  no = "Soil"))
 
 #### Read salamander points ####
 sal <- vect("Data/Ambystoma/Amb_macmar_thin.shp")
@@ -44,7 +44,7 @@ p1 <- ggplot() +
             fill = "grey90",
             col = NA) + 
     geom_spatvector(data = sal, aes(color = Cmmn_Nm), 
-                    alpha = 0.7, size = 2) +
+                    alpha = 0.5, size = 0.5) +
     geom_sf(data = basemap_sf, # lines on top of raster
             fill = NA,
             col = "grey20",
@@ -57,7 +57,7 @@ p1 <- ggplot() +
     theme(legend.position = "bottom") +
     xlim(-96, -68) +
     labs(fill = NULL) +
-    guides(color = guide_legend(override.aes = list(size=8)))
+    guides(color = guide_legend(override.aes = list(size=1)))
 p1
 
 #### Plot NDP ###
@@ -69,13 +69,13 @@ p2 <- ndp %>%
     xlab("Niche Exclusivity") + ylab("Niche Dissimilarity") +
     geom_hline(yintercept = 0.5) +
     geom_vline(xintercept = 0.5) +
-    geom_point(size = 6, alpha = 0.8) +
-    geom_text_repel(size = 8) +
+    geom_point(size = 4, alpha = 0.8) +
+    geom_text_repel(size = 3) +
     scale_fill_manual("Variable type", 
                       values = c("#62A39F", "#000000", "#2F8745")) +
     theme_bw() +
     scale_shape_manual("Variable type", 
-                      values = c(21, 22, 23)) +
+                       values = c(21, 22, 23)) +
     theme_bw() +
     theme(#legend.position = "bottom",
         legend.position = c(0.87, 0.75),
@@ -125,7 +125,7 @@ p3 <-
         var == "WC3rdbar" ~ "Water Content at 1/3 Bar (%) [WC3rdbar]"
     )) %>%
     ggplot(aes(x = layer, y = value, color = source)) +
-    geom_line(linewidth = 2, alpha = 0.7) +
+    geom_line(linewidth = 1.5, alpha = 0.7) +
     facet_wrap(vartype ~ var, scales = "free_x") +
     ylab("Frequency") +
     xlab("Environmental gradient") +
@@ -134,14 +134,19 @@ p3 <-
     theme(legend.position = "top")
 p3
 
-gt <- arrangeGrob(p1 + theme(legend.text = element_text(size = 14)) +
-                      guides(color = guide_legend(override.aes = list(size=3))), 
-                  p2 + theme(axis.title = element_text(size = 20),
-                             legend.text = element_text(size = 20),
-                             text = element_text(size = 20)), 
-                  p3 + theme(text = element_text(size = 16),
+gt <- arrangeGrob(p1 + theme(axis.title = element_text(size = 8),
+                             axis.text = element_text(size = 6),
+                             legend.text = element_text(size = 6), 
+                             legend.title = element_text(size = 8),
+                             legend.spacing.x = unit(0.15, 'cm'),
+                             legend.key.size = unit(0.2, "cm")) +
+                      guides(color = guide_legend(override.aes = list(size=1), byrow = F)), 
+                  p2 + theme(axis.title = element_text(size = 8),
+                             legend.text = element_text(size = 8),
+                             text = element_text(size = 8)), 
+                  p3 + theme(text = element_text(size = 8),
                              legend.position = "none",
-                             axis.title = element_text(size = 20)),
+                             axis.title = element_text(size = 8)),
                   ncol = 2, nrow = 2, 
                   layout_matrix = rbind(c(1, 1, 3, 3, 3, 3, 3),
                                         c(1, 1, 3, 3, 3, 3, 3),
@@ -154,18 +159,21 @@ gt <- arrangeGrob(p1 + theme(legend.text = element_text(size = 14)) +
 
 # Add labels to the arranged plots
 p <- as_ggplot(gt) +                                # transform to a ggplot
-    draw_plot_label(label = c("A)", "B)", "C)"), size = 20,
+    draw_plot_label(label = c("A)", "B)", "C)"), size = 10,
                     x = c(-0.005, 0.30, -0.005), y = c(1, 1, 0.62)) # Add labels
 #x = c(-0.005, 0.49, 0.49), y = c(1, 1, 0.5)) # Add labels
 #x = c(-0.005, -0.005, -0.005), y = c(1, 2, 3)) # Add labels
 p
+tiff("Figures/Amacopac_NDP2.tif", width = 24, height = 18, res = 300, units = "cm", compression = "lzw")
+p
+dev.off()
+
 
 pdf("Figures/Amacopac_NDP.pdf", width = 19, height = 15)
 p
 dev.off()
 
-#png("Figures/Amacopac_NDP.png", width = 11000, height = 9000, res = 600)
-tiff("Figures/Amacopac_NDP.tif", width = 11000, height = 9000, res = 600, type = "cairo")
+png("Figures/Amacopac_NDP.png", width = 11000, height = 9000, res = 600)
 p
 dev.off()
 
@@ -236,11 +244,11 @@ library(GGally)
 
 
 p5 <- ggpairs(ndp %>% filter(!var %in% c("bio8", "bio9")), 
-        columns = c(1, 2, 4, 5), 
-        aes(label = var, fill = vartype, shape = vartype),
-        upper = list(continuous = wrap("cor", size = 18)), 
-        lower = list(continuous = wrap("points", size = 3)), 
-        legends = T) +
+              columns = c(1, 2, 4, 5), 
+              aes(label = var, fill = vartype, shape = vartype),
+              upper = list(continuous = wrap("cor", size = 18)), 
+              lower = list(continuous = wrap("points", size = 3)), 
+              legends = T) +
     scale_fill_manual("Variable type", values = c("#62A39F", "#000000", "#2F8745")) +
     scale_shape_manual("Variable type", values = c(21, 22, 23)) +
     theme_bw() +
