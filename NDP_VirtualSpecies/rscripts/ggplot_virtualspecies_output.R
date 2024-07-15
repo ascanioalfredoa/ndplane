@@ -6,7 +6,7 @@ library(gridExtra)
 library(ggpubr)
 library(cowplot)
 #### Read data ####
-vsp_sims <- read_csv("vsp_sims_results.csv")
+vsp_sims <- read_csv("output/vsp_sims_results.csv")
 
 #### Check range of D and I ####
 range(vsp_sims$D)
@@ -25,7 +25,7 @@ vsp_sims <-
 vsp_sims_D <- vsp_sims %>%
     filter(D %in% round(seq(0.15, 1, 0.25), 2))
 
-png(filename = "vsp_D_NDP.png", width = 5000, height = 4500, res = 600)
+png(filename = "Figures/vsp_D_NDP.png", width = 5000, height = 4500, res = 600)
 gg_a <- 
     vsp_sims_D %>%
     ggplot(aes(x = Exclusivity, y = Dissimilarity, color = as.factor(D))) +
@@ -43,7 +43,7 @@ dev.off()
 vsp_sims_I <- vsp_sims %>%
     filter(I %in% round(seq(0.40, 0.95, 0.15), 2))
 
-png(filename = "vsp_I_NDP.png", width = 5000, height = 4500, res = 600)
+png(filename = "Figures/vsp_I_NDP.png", width = 5000, height = 4500, res = 600)
 gg_b <- 
     vsp_sims_I %>%
     ggplot(aes(x = Exclusivity, y = Dissimilarity, color = as.factor(I))) +
@@ -55,7 +55,7 @@ gg_b <-
 gg_b
 dev.off()
 
-png(filename = "vsp_D_I.png", width = 5000, height = 4500, res = 600)
+png(filename = "Figures/vsp_D_I.png", width = 5000, height = 4500, res = 600)
 gg_c <- 
     vsp_sims %>%
     select(I, D) %>%
@@ -67,7 +67,7 @@ gg_c <-
 gg_c
 dev.off()
 
-png(filename = "vsp_NDMag_I.png", width = 5000, height = 4500, res = 600)
+png(filename = "Figures/vsp_NDMag_I.png", width = 5000, height = 4500, res = 600)
 gg_d <- 
     vsp_sims %>%
     select(I, ND_Magnitude) %>%
@@ -79,7 +79,7 @@ gg_d <-
 gg_d
 dev.off()
 
-png(filename = "vsp_NDMag_D.png", width = 5000, height = 4500, res = 600)
+png(filename = "Figures/vsp_NDMag_D.png", width = 5000, height = 4500, res = 600)
 gg_e <- 
     vsp_sims %>%
     select(D, ND_Magnitude) %>%
@@ -92,7 +92,7 @@ gg_e
 dev.off()
 
 
-png(filename = "vsp_Dissimilarity_D.png", width = 5000, height = 4500, res = 600)
+png(filename = "Figures/vsp_Dissimilarity_D.png", width = 5000, height = 4500, res = 600)
 gg_f <- 
     vsp_sims %>%
     select(D, Dissimilarity) %>%
@@ -104,7 +104,7 @@ gg_f <-
 gg_f
 dev.off()
 
-png(filename = "vsp_Dissimilarity_I.png", width = 5000, height = 4500, res = 600)
+png(filename = "Figures/vsp_Dissimilarity_I.png", width = 5000, height = 4500, res = 600)
 gg_g <- 
     vsp_sims %>%
     select(I, Dissimilarity) %>%
@@ -116,7 +116,7 @@ gg_g <-
 gg_g
 dev.off()
 
-png(filename = "vsp_Exclusivity_D.png", width = 5000, height = 4500, res = 600)
+png(filename = "Figures/vsp_Exclusivity_D.png", width = 5000, height = 4500, res = 600)
 gg_h <- 
     vsp_sims %>%
     select(D, Exclusivity) %>%
@@ -128,7 +128,7 @@ gg_h <-
 gg_h
 dev.off()
 
-png(filename = "vsp_Exclusivity_I.png", width = 5000, height = 4500, res = 600)
+png(filename = "Figures/vsp_Exclusivity_I.png", width = 5000, height = 4500, res = 600)
 gg_i <- 
     vsp_sims %>%
     select(I, Exclusivity) %>%
@@ -202,8 +202,9 @@ p <- as_ggplot(gt) +                                # transform to a ggplot
     draw_plot_label(label = c("A)", "B)", "C)", "D)", "E)"), size = 20,
                     x = c(0, 0.5, 0, 0.33, 0.66), y = c(1, 1, 0.5, 0.5, 0.5)) # Add labels
 
-png(filename = "Fig7_vsp.png", width = 10000, height = 9000, res = 600)
-p
+png(filename = "Figures/Fig4.png", width = 11000, height = 9000, res = 600)
+tiff(filename = "Figures/Fig4.tif", width = 11000, height = 9000, res = 600)
+p + ggtitle("Figure 4")
 #grid.arrange(gg_a, gg_b, gg_c, gg_d, gg_e, 
 #             layout_matrix = rbind(
 #                 c(1, 1, 1, 2, 2, 2),
@@ -211,7 +212,7 @@ p
 #             ))
 dev.off()
 
-png(filename = "FigSX_vsp_cors.png", width = 10000, height = 9000, res = 600)
+png(filename = "Figures/FigSX_vsp_cors.png", width = 10000, height = 9000, res = 600)
 grid.arrange(gg_f, gg_g, gg_h, gg_i, 
              layout_matrix = rbind(
                  c(1, 1, 1, 2, 2, 2),

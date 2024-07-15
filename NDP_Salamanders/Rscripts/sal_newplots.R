@@ -163,7 +163,8 @@ pdf("Figures/Amacopac_NDP.pdf", width = 19, height = 15)
 p
 dev.off()
 
-png("Figures/Amacopac_NDP.png", width = 11000, height = 9000, res = 600)
+#png("Figures/Amacopac_NDP.png", width = 11000, height = 9000, res = 600)
+tiff("Figures/Amacopac_NDP.tif", width = 11000, height = 9000, res = 600, type = "cairo")
 p
 dev.off()
 
