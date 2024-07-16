@@ -5,9 +5,9 @@
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/ascanioalfredoa/ndplane/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ascanioalfredoa/ndplane/actions/workflows/R-CMD-check.yaml)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/ndplane)](https://CRAN.R-project.org/package=ndplane)
+[![R-CMD-check](https://github.com/ascanioalfredoa/ndplane/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ascanioalfredoa/ndplane/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The goal of ndplane is to …
