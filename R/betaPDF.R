@@ -13,8 +13,8 @@ betafunction_max <- function(){
 #'
 #' @param a Lower bound of beta curve
 #' @param b Upper bound of beta curve
-#' @param alpha \alpha shape parameter (right skew)
-#' @param gamma \gamma shape parameter (left skew)
+#' @param alpha \eqn{\alpha} shape parameter (right skew)
+#' @param gamma \eqn{\gamma} shape parameter (left skew)
 #' @param k Scale parameter, usually left at 1 by default
 #' @param interval Interval length for steps between a and b. By default 0.001
 #'
