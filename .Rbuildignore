@@ -5,3 +5,5 @@
 ^NDP_VirtualSpecies$
 ^NDP_Simulations$
 ^Bhattacharyya$
+^\.github$
+^README\.Rmd$
