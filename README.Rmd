@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# ndplane
+# ndplane <img src="man/figures/logo.png" align="right" height="134" alt="" />
 
 <!-- badges: start -->
 [![CRAN status](https://www.r-pkg.org/badges/version/ndplane)](https://CRAN.R-project.org/package=ndplane)

@@ -6,6 +6,8 @@
 \alias{ndplane-package}
 \title{ndplane: Creates Niche Divergence Plane And Other Analyses (One Line, Title Case)}
 \description{
+\if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
+
 ndplane is a package that allows its user to compare ecological niches following the Niche Divergence Plane methdology and framework. With this we can quantify and classify different niche divergence scenarios across multiple niche axes.
 }
 \author{
