@@ -15,7 +15,7 @@ beta_overlap <- function(spa, spb) {
         spa[spa[, 1] %in% spb[, 1], ] |>
         dplyr::left_join(spb[spb[, 1] %in% spb[, 1], ], by = "x", suffix = c("_a", "_b")) |>
         tidyr::pivot_longer(cols = 2:3, names_to = "source_curve", values_to = "y") |>
-        # dplyr::group_by(.data$x) |>
+        dplyr::group_by(.data$x) |>
         dplyr::summarise(y = min(.data$y))
     ov
 }

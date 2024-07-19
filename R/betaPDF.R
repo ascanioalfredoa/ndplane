@@ -32,5 +32,27 @@ betaPDF <- function(a = 0, b = 1, alpha = 1, gamma = 1, k = 1, interval = 0.001)
     x = x[y >= 0]
     y = y[y >= 0]
     y = y/max(y)
-    return(data.frame(x, y))
+    data.frame(x, y)
+}
+
+#' Performs betaPDF calculation on Parameter Space row
+#'
+#' @param psv (row) vector, or single row data frame from parameter space
+#' @param k Scale parameter, usually left at 1 by default
+#' @param interval Interval length for steps between a and b. By default 0.001
+#'
+#' @return Data frame containing X and Y values for the desired intervals between a and b
+#' @export
+#'
+#' @examples
+#' a <- 1; b <- 2
+#' alpha = gamma <- 1:2
+#' par_space <- set_parameter_space(a, b, alpha, gamma)
+#' betaPDF_ps(psv = par_space[1, ])
+betaPDF_ps <- function(psv, k = 1, interval = 0.001) {
+    a <- psv[[1]]
+    b <- psv[[2]]
+    alpha <- psv[[3]]
+    gamma <- psv[[4]]
+    betaPDF(a, b, alpha, gamma, k = k, interval = interval)
 }

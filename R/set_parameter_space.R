@@ -15,5 +15,6 @@
 set_parameter_space <- function(a, b, alpha, gamma){
     par_space <- expand.grid(a = a, b = b, alpha = alpha, gamma = gamma)
     par_space <- par_space[par_space$a < par_space$b, ]
+    rownames(par_space) <- 1:nrow(par_space)
     par_space
 }
