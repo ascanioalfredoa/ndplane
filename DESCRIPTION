@@ -1,5 +1,5 @@
 Package: ndplane
-Title: Creates Niche Divergence Plane And Other Analyses (One Line, Title Case)
+Title: Creates Niche Divergence Plane And Other Analyses
 Version: 0.0.0.9000
 Authors@R: 
     person("Alfredo", "Ascanio", , "ascanio.alfredoa@gmail.com", role = c("aut", "cre"),
@@ -17,6 +17,5 @@ Imports:
     furrr,
     future,
     pracma,
-    purrr,
     rlang,
     tidyr
