@@ -9,9 +9,9 @@ calculate_nichediv_beta(psp, parallel = FALSE, n = 2)
 \arguments{
 \item{psp}{Parameter space created using the set_parameter_space() function}
 
-\item{n}{number of cores to use in parallel processing (see future::plan())}
+\item{parallel}{logical. Change to TRUE if parallel processing is desired}
 
-\item{parellel}{logical. Change to TRUE if parallel processing is desired}
+\item{n}{number of cores to use in parallel processing (see future::plan())}
 }
 \value{
 A data frame containing niche divergence plane values of Dissimilarity and Exclusivity, along with the parameters of each species response
