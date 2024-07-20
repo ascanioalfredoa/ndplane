@@ -4,7 +4,7 @@
 \name{ndplane-package}
 \alias{ndplane}
 \alias{ndplane-package}
-\title{ndplane: Creates Niche Divergence Plane And Other Analyses (One Line, Title Case)}
+\title{ndplane: Creates Niche Divergence Plane And Other Analyses}
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 

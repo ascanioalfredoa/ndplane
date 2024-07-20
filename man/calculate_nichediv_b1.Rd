@@ -18,12 +18,12 @@ Niche Divergence Calculations for a given Parameter Space based on the beta func
 \examples{
 # Set parameter domains
 a = b <- round(1:3, 3)
-alpha = gamma <- round(1:3)
+alpha = gamma <- round(1)
 
 # Set parameter space (combination of parameters for any beta function)
 par_space <- set_parameter_space(a, b, alpha, gamma)
 
 #Run calc
-simulate_nichediv_b1(psp)
+calculate_nichediv_b1(psp = par_space)
 
 }

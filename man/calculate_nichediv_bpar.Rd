@@ -20,11 +20,11 @@ A data frame containing niche divergence plane values of Dissimilarity and Exclu
 \examples{
 # Set parameter domains
 a = b <- round(1:3, 3)
-alpha = gamma <- round(1:3)
+alpha = gamma <- round(1)
 
 # Set parameter space (combination of parameters for any beta function)
 par_space <- set_parameter_space(a, b, alpha, gamma)
 
 #Run calc
-simulate_nichediv_bpar(psp)
+calculate_nichediv_bpar(psp = par_space)
 }

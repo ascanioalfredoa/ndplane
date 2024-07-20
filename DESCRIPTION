@@ -16,6 +16,9 @@ Imports:
     dplyr,
     furrr,
     future,
+    parallelly,
     pracma,
+    progressr,
     rlang,
-    tidyr
+    tidyr,
+    utils

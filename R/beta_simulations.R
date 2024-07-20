@@ -8,7 +8,7 @@
 #' @examples
 #' # Set parameter domains
 #' a = b <- round(1:3, 3)
-#' alpha = gamma <- round(1:3)
+#' alpha = gamma <- round(1)
 #'
 #' # Set parameter space (combination of parameters for any beta function)
 #' par_space <- set_parameter_space(a, b, alpha, gamma)
@@ -43,7 +43,7 @@ calculate_nichediv_b1 <- function(psp) {
                               niche_excl(spa, spb),
                               par_space[i, ], par_space[j, ])
             results
-        }, progress = TRUE) |>
+        }) |>
             dplyr::bind_rows()
     }
     )
@@ -62,7 +62,7 @@ calculate_nichediv_b1 <- function(psp) {
 #' @examples
 #' # Set parameter domains
 #' a = b <- round(1:3, 3)
-#' alpha = gamma <- round(1:3)
+#' alpha = gamma <- round(1)
 #'
 #' # Set parameter space (combination of parameters for any beta function)
 #' par_space <- set_parameter_space(a, b, alpha, gamma)
@@ -96,7 +96,7 @@ calculate_nichediv_bpar <- function(psp, n = parallelly::availableCores()-1) {
                           niche_excl(spa, spb),
                           par_space[i, ], par_space[j, ])
         results
-    }, .progress = TRUE) |>
+    }) |>
         dplyr::bind_rows()
     future::plan(future::sequential)
     })
