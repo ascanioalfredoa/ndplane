@@ -19,16 +19,16 @@ simdata <- read_csv("Results/full_sim_output_v1.csv")
 Sys.Date()
 
 png("Figures/sim_plot_all.png", width = 1000, height = 1000)
-plot(0, 0, xlim = c(0, 1), ylim = c(0, 1), 
+plot(0, 0, xlim = c(0, 1), ylim = c(0, 1),
      xlab = "Exclusivity", ylab = "Dissimilarity",
      pch = 19, cex = 0.2)
 for(i in 1:length(sim_files)) {
   sim <- read.csv(sim_files[i])
   sim <- sim[complete.cases(sim), ]
   if(nrow(sim) == 0) next
-  
+
   #mean(c(sim$a_A[1], sim$b_A[1]))
-  
+
   points(x = sim$Exclusivity, y = sim$Dissimilarity, pch = 19, cex = 0.2)
   if(i %% 100 == 0) print(i)
 }
@@ -49,14 +49,14 @@ library(tidyverse)
 
 #### Checking negative values of dissimilarity ####
 
-negativediss <- 
+negativediss <-
   simdata2 %>%
   filter(Dissimilarity < 0)
 
 nrow(negativediss)/nrow(simdata2) # 0.1% of values yielded negative
 
 #### Checking NA values of dissimilarity ####
-nadiss <- 
+nadiss <-
   simdata %>%
   filter(is.na(Dissimilarity))
 
@@ -75,7 +75,7 @@ str(na_table)
 tail(na_table[, , , 13])
 
 #### a) Conservatism to fully Nested case ####
-nested_case1 <- 
+nested_case1 <-
   simdata2 %>%
   mutate(mid_A = (a_A + b_A)/2, mid_B = (a_B + b_B)/2) %>%
   filter(mid_A == mid_B & alpha_A == gamma_A & alpha_B == gamma_B &
@@ -101,7 +101,7 @@ View(nested_case1[nested_case1$Dissimilarity > 0.5, ])
 
 
 #### b) Conservatism to fully weighted divergence ####
-weighted_case1 <- 
+weighted_case1 <-
   simdata2 %>%
   #mutate(mid_A = (a_A + b_A)/2, mid_B = (a_B + b_B)/2) %>%
   filter(a_A == a_B & b_A == b_B &
@@ -122,10 +122,10 @@ dev.off()
 
 #### c) Conservatism to soft and full hard divergence ####
 
-csh_case1 <- 
+csh_case1 <-
   simdata2 %>%
   #mutate(mid_A = (a_A + b_A)/2, mid_B = (a_B + b_B)/2) %>%
-  filter((b_A - a_A) == (b_B - a_B) & 
+  filter((b_A - a_A) == (b_B - a_B) &
            alpha_A == gamma_A & alpha_B == gamma_B &
            alpha_A >= 1 & alpha_B >= 1 & gamma_A >= 1 & gamma_B >= 1)
 
@@ -143,7 +143,7 @@ csh_case1 %>%
 dev.off()
 #### d) Conservatism and moving nested divergence to hard divergence ####
 
-nested_case2 <- 
+nested_case2 <-
   simdata2 %>%
   #mutate(mid_A = (a_A + b_A)/2, mid_B = (a_B + b_B)/2) %>%
   filter(a_A < a_B & b_A > b_B & alpha_A == gamma_A & alpha_B == gamma_B &
@@ -163,10 +163,10 @@ nested_case2 %>%
 dev.off()
 
 #### e) Conservatism and moving weighted divergence to hard divergence ####
-weighted_case2 <- 
+weighted_case2 <-
   simdata2 %>%
   #mutate(mid_A = (a_A + b_A)/2, mid_B = (a_B + b_B)/2) %>%
-  filter((b_A - a_A) == (b_B - a_B) & 
+  filter((b_A - a_A) == (b_B - a_B) &
            a_A <= a_B & b_A <= b_B & a_B < b_A &
            alpha_A >= 1 & alpha_B >= 1 & gamma_A >= 1 & gamma_B >= 1 &
            alpha_A < gamma_A & alpha_B > gamma_B)
@@ -189,8 +189,8 @@ dev.off()
 
 
 ##### Combined plot ####
-plotdata <- bind_rows(nested_case1 %>% mutate(source = "Nested"), 
-                      nested_case2 %>% mutate(source = "Nested"), 
+plotdata <- bind_rows(nested_case1 %>% mutate(source = "Nested"),
+                      nested_case2 %>% mutate(source = "Nested"),
                       weighted_case1 %>% mutate(source = "Weighted"),
                       weighted_case2 %>% mutate(source = "Weighted"),
                       csh_case1 %>% mutate(source = "Soft"))
@@ -206,7 +206,7 @@ plotdata %>%
   xlim(0, 1) + ylim(0, 1) +
   theme_bw() +
   xlab("Niche Exclusivity") + ylab("Niche Dissimilarity") +
-  scale_fill_manual("Niche Divergence Gradients (To Hard Divergence)", 
+  scale_fill_manual("Niche Divergence Gradients (To Hard Divergence)",
                     #values = c("#62A39F", "#000000", "#2F8745")) +
                     values = brewer.pal(8, "Set1")[c(1, 2, 7)]) +
   #values = c("#000000", "#62A39F", "#725745")) +
