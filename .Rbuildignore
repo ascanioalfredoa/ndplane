@@ -1,11 +1,11 @@
 ^ndplane\.Rproj$
 ^\.Rproj\.user$
 ^LICENSE\.md$
-^NDP_Salamanders
-^NDP_VirtualSpecies
-^NDP_Simulations
-^Bhattacharyya
-^test_scripts
+NDP_Salamanders
+NDP_VirtualSpecies
+NDP_Simulations
+Bhattacharyya
+test_scripts
 ^\.github$
 ^README\.Rmd$
 ^README_Old\.md$
