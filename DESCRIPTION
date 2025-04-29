@@ -18,6 +18,13 @@ Imports:
     future,
     pracma,
     progressr,
+    readr,
     rlang,
+    terra,
+    tibble,
     tidyr,
-    utils
+    utils,
+    virtualspecies,
+    ggplot2,
+    purrr,
+    progress
