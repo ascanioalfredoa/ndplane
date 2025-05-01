@@ -27,4 +27,5 @@ Imports:
     virtualspecies,
     ggplot2,
     purrr,
-    progress
+    progress,
+    sf
