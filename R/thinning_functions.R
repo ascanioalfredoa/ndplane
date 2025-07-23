@@ -6,8 +6,9 @@
 #' @param thin.par Minimum pairwise distance in kilometers.
 #' @param reps Number of thinning replicates to perform (default = 10).
 #'
-#' @return A matrix of thinned coordinates (longitude, latitude).
+#' @return A matrix or data.frame of thinned coordinates (longitude, latitude).
 #' @export
+#' @family thinning
 thin_records <- function(x, thin.par, reps = 10) {
     if (inherits(x, "SpatVector")) {
         current_crs <- terra::crs(x, describe = TRUE)
@@ -66,6 +67,7 @@ thin_records <- function(x, thin.par, reps = 10) {
 #'
 #' @return A data.frame of spatially thinned coordinates.
 #' @export
+#' @family thinning
 adaptive_thin <- function(coords, cellsize = 1, min_occ = 10, thin_par = 5, reps = 10) {
     if (!inherits(coords, "sf")) {
         warning("Assuming input coordinates are in EPSG:4326 (WGS84).")

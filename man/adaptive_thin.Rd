@@ -24,3 +24,8 @@ A data.frame of spatially thinned coordinates.
 Recursively applies spatial thinning by gridding the landscape and thinning dense cells using \code{thin_records()}.
 If inputs are not spatial, assumes EPSG:4326 coordinates.
 }
+\seealso{
+Other thinning: 
+\code{\link{thin_records}()}
+}
+\concept{thinning}

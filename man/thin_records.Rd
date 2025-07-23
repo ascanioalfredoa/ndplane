@@ -14,8 +14,13 @@ thin_records(x, thin.par, reps = 10)
 \item{reps}{Number of thinning replicates to perform (default = 10).}
 }
 \value{
-A matrix of thinned coordinates (longitude, latitude).
+A matrix or data.frame of thinned coordinates (longitude, latitude).
 }
 \description{
 Applies spatial thinning to remove points closer than a specified minimum distance. Assumes geographic coordinates (EPSG:4326) unless otherwise specified. Projects to EPSG:4326 if necessary.
 }
+\seealso{
+Other thinning: 
+\code{\link{adaptive_thin}()}
+}
+\concept{thinning}
