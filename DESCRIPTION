@@ -3,7 +3,7 @@ Title: Creates Niche Divergence Plane And Other Analyses
 Version: 0.0.0.9000
 Authors@R: 
     person("Alfredo", "Ascanio", , "ascanio.alfredoa@gmail.com", role = c("aut", "cre"),
-           comment = c(ORCID = "000-0001-9987-7977"))
+           comment = c(ORCID = "0000-0001-9987-7977"))
 Description: ndplane is a package that allows its user to compare ecological niches following the Niche Divergence Plane methdology and framework. With this we can quantify and classify different niche divergence scenarios across multiple niche axes.
 License: MIT + file LICENSE
 Encoding: UTF-8
@@ -12,6 +12,8 @@ RoxygenNote: 7.3.2
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+Depends:
+    R (>= 4.1.0)
 Imports: 
     dplyr,
     furrr,

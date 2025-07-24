@@ -11,7 +11,7 @@
 ndplane is a package that allows its user to compare ecological niches following the Niche Divergence Plane methdology and framework. With this we can quantify and classify different niche divergence scenarios across multiple niche axes.
 }
 \author{
-\strong{Maintainer}: Alfredo Ascanio \email{ascanio.alfredoa@gmail.com} (\href{https://orcid.org/000-0001-9987-7977}{ORCID})
+\strong{Maintainer}: Alfredo Ascanio \email{ascanio.alfredoa@gmail.com} (\href{https://orcid.org/0000-0001-9987-7977}{ORCID})
 
 }
 \keyword{internal}
