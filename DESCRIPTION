@@ -30,4 +30,5 @@ Imports:
     ggplot2,
     purrr,
     progress,
-    sf
+    sf,
+    maxnet

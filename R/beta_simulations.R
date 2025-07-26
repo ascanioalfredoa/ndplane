@@ -86,7 +86,7 @@ calculate_nichediv_bpar <- function(psp, n = 2) {
 
     progressr::with_progress({
     p <- progressr::progressor(steps = length(row_combs))
-    future::plan('future::multisession', workers = n)
+    future::plan('future::multicore', workers = n)
     res <- row_combs |> furrr::future_map(\(x) {
         p()
         i <- x[1]; j <- x[2]
