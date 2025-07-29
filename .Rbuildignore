@@ -7,5 +7,6 @@
 ^Bhattacharyya
 ^test_scripts
 ^\.github$
+^\.continue$
 ^README\.Rmd$
 ^README_Old\.md$

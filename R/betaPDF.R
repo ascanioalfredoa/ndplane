@@ -56,3 +56,4 @@ betaPDF_ps <- function(psv, k = 1, interval = 0.001) {
     gamma <- psv[[4]]
     betaPDF(a, b, alpha, gamma, k = k, interval = interval)
 }
+

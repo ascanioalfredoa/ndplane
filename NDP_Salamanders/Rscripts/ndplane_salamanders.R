@@ -35,25 +35,25 @@ calculate_density_curves <- function(dat, category_col, variables) {
   for (var in variables) {
     envdat <- dat[!is.na(dat[[var]]), ]
     x_all <- density(envdat[[var]], n = 3000)$x
-    cat_names <- envdat %>% dplyr::select({category_col}) %>% unique() %>% dplyr::pull()
-    ndp_data <- envdat %>%
-      dplyr::select({category_col}, {{var}}) %>%
-      dplyr::group_by(across(all_of(category_col))) %>%
+    cat_names <- envdat |> dplyr::select({{category_col}}) |> unique() |> dplyr::pull()
+    ndp_data <- envdat |>
+      dplyr::select({{category_col}}, {{var}}) |>
+      dplyr::group_by(dplyr::across(dplyr::all_of(category_col))) |>
       dplyr::group_map(~ {
         dens <- density(.x[[var]], n = 3000)
         data.frame(x = dens$x, y = dens$y)
-      }) %>%
-      rlang::set_names(cat_names) %>%
+      }) |>
+      rlang::set_names(cat_names) |>
       lapply(function(x) {
-        approx(x$x, x$y, xout = x_all) %>%
-          as.data.frame() %>%
-          filter(complete.cases(.)) %>%
-          mutate(Cumden = cumsum(y)) %>%
-          mutate(Cumden = Cumden / max(Cumden)) %>%
-          filter(Cumden >= 0.025 & Cumden <= 0.975) %>%
-          mutate(y = y / max(y)) %>%
-          select(1:2)
-      }) %>%
+        stats::approx(x$x, x$y, xout = x_all) |>
+          as.data.frame() |>
+          dplyr::filter(complete.cases(.)) |>
+          dplyr::mutate(Cumden = cumsum(y)) |>
+          dplyr::mutate(Cumden = Cumden / max(Cumden)) |>
+          dplyr::filter(Cumden >= 0.025 & Cumden <= 0.975) |>
+          dplyr::mutate(y = y / max(y)) |>
+          dplyr::select(1:2)
+      }) |>
       dplyr::bind_rows(.id = category_col)
     densities[[var]] <- ndp_data
   }
@@ -76,9 +76,9 @@ calculate_niche_metrics <- function(densities, category_col) {
     ndp_data <- densities[[var]]
     taxa_comb <- t(combn(unique(ndp_data[[category_col]]), 2))
     for (i in seq_len(nrow(taxa_comb))) {
-      A <- ndp_data %>% dplyr::filter(get(category_col) == taxa_comb[i, 1])
-      B <- ndp_data %>% dplyr::filter(get(category_col) == taxa_comb[i, 2])
-      C <- dplyr::inner_join(A, B, by = "x", suffix = c("_a", "_b")) %>%
+      A <- ndp_data |> dplyr::filter(!!rlang::sym(category_col) == taxa_comb[i, 1])
+      B <- ndp_data |> dplyr::filter(!!rlang::sym(category_col) == taxa_comb[i, 2])
+      C <- dplyr::inner_join(A, B, by = "x", suffix = c("_a", "_b")) |>
         dplyr::transmute(x, y = pmin(y_a, y_b))
       NicheDiss <- 1 - (pracma::trapz(C$x, C$y) / pracma::trapz(A$x, A$y) +
         pracma::trapz(C$x, C$y) / pracma::trapz(B$x, B$y)) / 2
@@ -105,8 +105,8 @@ calculate_niche_metrics <- function(densities, category_col) {
 #' @import ggplot2
 #' @export
 plot_ndp <- function(niche_metrics) {
-  niche_metrics <- niche_metrics %>%
-    dplyr::mutate(comparison = paste(Taxa1, Taxa2, sep = "/")) %>%
+  niche_metrics <- niche_metrics |>
+    dplyr::mutate(comparison = paste(Taxa1, Taxa2, sep = "/")) |>
     dplyr::mutate(vartype = c(rep("Temperature", 11), rep("Precipitation", 8), rep("Soil", 12)))
   ggplot2::ggplot(niche_metrics, aes(x = NicheEx, y = NicheDiss, label = Var, fill = vartype)) +
     ggplot2::xlab("Niche Exclusivity") + ggplot2::ylab("Niche Dissimilarity") +
@@ -114,10 +114,10 @@ plot_ndp <- function(niche_metrics) {
     ggplot2::geom_hline(yintercept = 0.5) +
     ggplot2::geom_vline(xintercept = 0.5) +
     ggplot2::geom_point(size = 4, shape = 21, alpha = 0.8) +
-    ggplot2::geom_text(ggrepel::geom_text_repel(size = 4)) +
-    ggplot2::cale_fill_manual("Variable type", values = c("#62A39F", "#000000", "#2F8745")) +
+    ggrepel::geom_text_repel(size = 4) +
+    ggplot2::scale_fill_manual("Variable type", values = c("#62A39F", "#000000", "#2F8745")) +
     ggplot2::theme_bw() +
-    ggplot2::theme(legend.position = c(0.87, 0.75), legend.background = element_rect(fill = "white", color = "black"))
+    ggplot2::theme(legend.position = c(0.87, 0.75), legend.background = ggplot2::element_rect(fill = "white", color = "black"))
 }
 
 #' Save Plot to Files

@@ -3,7 +3,7 @@
 #' Master function to run niche divergence analysis using specified method.
 #'
 #' @param method Character. Either "maxent" or "kde" to select analysis approach.
-#' #@param params List of named parameters required by the selected method functions.
+#' @param params List of named parameters required by the selected method functions.
 #' @return List containing results specific to the analysis method.
 #' @export
 run_niche_divergence_analysis <- function(method = c("maxent", "kde"), params = list()) {

@@ -29,7 +29,7 @@ create_study_area <- function(occurrences, basemap, buffer_distance) {
 #'
 #' Wrapper to thinning function (expects thin_records to be available in namespace).
 #' @param records Spatial vector of records to thin.
-#' #@param thin_par Numeric. Parameter for thinning distance.
+#' @param thin_par Numeric. Parameter for thinning distance.
 #' @param reps Integer. Number of repetitions.
 #' @return Thinned spatial vector.
 #' @export
@@ -68,7 +68,7 @@ extract_env_values <- function(env_data, points) {
 #'
 #' Combine presence and background points for Maxent input.
 #' @param presence Spatial vector of presence points.
-#' #@param background Spatial vector of background points.
+#' @param background Spatial vector of background points.
 #' @param env_data Environmental data extracted at points.
 #' @return Data frame of presence-absence and environmental variables.
 #' @export
@@ -105,6 +105,56 @@ calculate_maxent_ndp <- function(model1, model2) {
   # Placeholder: Implement using ENMTools or custom niche metrics
   list(indices = NULL, response_curves = NULL)
 }
+
+run_maxent_ndp_pipeline <- function(presence_species1, presence_species2,
+                                    background_species1, background_species2,
+                                    basemap_path, raster_paths, buffer_distance = 1e5) {
+
+  # Load spatial data
+  sp1 <- load_vector_data(presence_species1)
+  sp2 <- load_vector_data(presence_species2)
+  bg1 <- load_vector_data(background_species1)
+  bg2 <- load_vector_data(background_species2)
+  basemap <- load_vector_data(basemap_path)
+
+  # Create study areas
+  sa1 <- create_study_area(sp1, basemap, buffer_distance)
+  sa2 <- create_study_area(sp2, basemap, buffer_distance)
+  all_sa <- terra::union(sa1, sa2) |> terra::aggregate()
+
+  # Prepare environmental data
+  env_data <- prepare_env_data(raster_paths, all_sa)
+
+  # Thin background points (if needed)
+  bg1_thin <- thin_occurrence_records(bg1)
+  bg2_thin <- thin_occurrence_records(bg2)
+
+  # Loop through raster layers
+  niche_indices_list <- list()
+  response_curves_list <- list()
+  for(i in seq_along(names(env_data))) {
+    layer_name <- names(env_data)[i]
+
+    # Setup presence-absence data
+    pa_data1 <- setup_pa_data(sp1, bg1_thin, env_data[[i]])
+    pa_data2 <- setup_pa_data(sp2, bg2_thin, env_data[[i]])
+
+    # Fit maxent models
+    model1 <- fit_maxent_univariate(pa_data1, layer_name)
+    model2 <- fit_maxent_univariate(pa_data2, layer_name)
+
+    # Calculate niche divergence indices
+    ndp_res <- calculate_maxent_ndp(model1, model2)
+
+    niche_indices_list[[layer_name]] <- ndp_res$indices
+    response_curves_list[[layer_name]] <- ndp_res$response_curves
+  }
+
+  list(niche_indices = niche_indices_list, response_curves = response_curves_list)
+}
+  # Placeholder: Implement using ENMTools or custom niche metrics
+  list(indices = NULL, response_curves = NULL)
+
 
 #' Run Full Maxent NDP Analysis
 #'

@@ -14,29 +14,29 @@ source("Rscripts/mx_ndp_function.R")
 #------------------------------------------------------------------------------#
 
 ##### Load thinned occurrences ####
-sal_thin <- vect("Data/Ambystoma/Amb_macmar_thin.shp")
+sal_thin <- terra::vect("NDP_Salamanders/Data/Ambystoma/Amb_macmar_thin.shp")
 
-sal_thin %>%
-    ggplot(aes(color = Cmmn_Nm)) +
-    geom_spatvector()
+sal_thin |>
+    ggplot2::ggplot(tidyterra::aes(color = Cmmn_Nm)) +
+    tidyterra::geom_spatvector()
 
 #### Load north-american basemap ####
-na <- vect("Data/Basemaps/northamerica/World_Countries_Generalized.shp")
+na <- terra::vect("NDP_Salamanders/Data/Basemaps/northamerica/World_Countries_Generalized.shp")
 #na <- terra::project(na, sal_thin)
-na <- na %>%
-    filter(ISO %in% c("US", "CA", "MX"))
+na <- na |>
+    tidyterra::filter(ISO %in% c("US", "CA", "MX"))
 na <- terra::aggregate(na)
 
-na %>%
-    ggplot() +
-    geom_spatvector() +
-    geom_spatvector(data = sal_thin, aes(color = Cmmn_Nm))
+na |>
+    ggplot2::ggplot() +
+    tidyterra::geom_spatvector() +
+    tidyterra::geom_spatvector(data = sal_thin, tidyterra::aes(color = Cmmn_Nm))
 
 #### Divide occurrences by species ####
-mar <- sal_thin %>%
-    filter(Cmmn_Nm == "Marbled Salamander")
-spo <- sal_thin %>%
-    filter(Cmmn_Nm == "Spotted Salamander")
+mar <- sal_thin |>
+    dplyr::filter(Cmmn_Nm == "Marbled Salamander")
+spo <- sal_thin |>
+    dplyr::filter(Cmmn_Nm == "Spotted Salamander")
 
 #------------------------------------------------------------------------------#
 ########################### Create study areas #################################
@@ -46,8 +46,8 @@ spo <- sal_thin %>%
 #### There should be two study areas at the end (marbled vs spotted)
 
 # Create buffer
-mar_sa <- buffer(mar, 1e5) #100 km buffer (10k meters) for study area
-spo_sa <- buffer(spo, 1e5)
+mar_sa <- terra::buffer(mar, 1e5) #100 km buffer (10k meters) for study area
+spo_sa <- terra::buffer(spo, 1e5)
 
 # Union/aggregate of buffers
 mar_sa <- terra::aggregate(mar_sa)
@@ -58,77 +58,77 @@ mar_sa <- terra::intersect(mar_sa, na)
 spo_sa <- terra::intersect(spo_sa, na)
 
 # Create "total study area" with the combination of both study areas to ease some later processes down the line
-all_sa <- terra::union(mar_sa, spo_sa) %>% terra::aggregate()
+all_sa <- terra::union(mar_sa, spo_sa) |> terra::aggregate()
 
-all_sa %>%
-    ggplot() +
-    geom_spatvector() +
-    geom_spatvector(data = sal_thin, aes(color = Cmmn_Nm))
+all_sa |>
+    ggplot2::ggplot() +
+    tidyterra::geom_spatvector() +
+    tidyterra::geom_spatvector(data = sal_thin, ggplot2::aes(color = Cmmn_Nm))
 
 #------------------------------------------------------------------------------#
 ######### Maybe load full salamander dataset to build TGS background ###########
 #------------------------------------------------------------------------------#
 
 # Load all ambystoma occurrences
-all_am <- vect("Data/Ambystoma/Full_WGS84.shp")
+all_am <- terra::vect("NDP_Salamanders/Data/Ambystoma/Full_WGS84.shp")
 
 # Filter by study areas
 all_am <- terra::intersect(all_am, all_sa)
 
 
 # For each species, subset TGS that does not contain them
-spo_tgs <- all_am %>%
-    filter(!(Cmmn_Nm %in% "Spotted Salamander"))
-mar_tgs <- all_am %>%
-    filter(!(Cmmn_Nm %in% "Marbled Salamander"))
+spo_tgs <- all_am |>
+    tidyterra::filter(!(Cmmn_Nm %in% "Spotted Salamander"))
+mar_tgs <- all_am |>
+    tidyterra::filter(!(Cmmn_Nm %in% "Marbled Salamander"))
 
 # If available, load pre-loaded thinned TGS
-spo_tgs_t <- vect("Data/Ambystoma/spo_tgs_t.shp")
-mar_tgs_t <- vect("Data/Ambystoma/mar_tgs_t.shp")
+spo_tgs_t <- terra::vect("NDP_Salamanders/Data/Ambystoma/spo_tgs_t.shp")
+mar_tgs_t <- terra::vect("NDP_Salamanders/Data/Ambystoma/mar_tgs_t.shp")
 
 #Thin TGS occurrences
-spo_tgs_t <- spo_tgs %>%
-    terra::split(f = "Cmmn_Nm") %>%
-    lapply(FUN = function(x) thin_records(x, thin.par = 10, reps = 10)) %>%
-    do.call(rbind, .)
+spo_tgs_t <- spo_tgs |>
+    terra::split(f = "Cmmn_Nm") |>
+    lapply(function(x) thin_records(x, thin.par = 10, reps = 10)) |>
+    (\(x) do.call(rbind, x))()
 spo_tgs_t <- thin_records(spo_tgs_t, thin.par = 10, reps = 10)
 
-mar_tgs_t <- mar_tgs %>%
-    terra::split(f = "Cmmn_Nm") %>%
-    lapply(FUN = function(x) thin_records(x, thin.par = 10, reps = 10)) %>%
-    do.call(rbind, .)
+mar_tgs_t <- mar_tgs |>
+    terra::split(f = "Cmmn_Nm") |>
+    lapply(function(x) thin_records(x, thin.par = 10, reps = 10)) |>
+    (\(x) do.call(rbind, x))()
 mar_tgs_t <- thin_records(mar_tgs_t, thin.par = 10, reps = 10)
 
 # Save TGS as background points
-writeVector(mar_tgs_t, filename = "Data/Ambystoma/mar_tgs_t.shp")
-writeVector(spo_tgs_t, filename = "Data/Ambystoma/spo_tgs_t.shp")
+terra::writeVector(mar_tgs_t, filename = "Data/Ambystoma/mar_tgs_t.shp")
+terra::writeVector(spo_tgs_t, filename = "Data/Ambystoma/spo_tgs_t.shp")
 
 # Check thinned TGS points across the study area    
 all_sa %>%
-    ggplot() +
-    geom_spatvector() +
-    geom_spatvector(data = spo_tgs_t, aes(color = Cmmn_Nm)) +
-    xlim(ext(all_sa)[1:2]) + ylim(ext(all_sa)[3:4])
+    ggplot2::ggplot() +
+    tidyterra::geom_spatvector() +
+    tidyterra::geom_spatvector(data = spo_tgs_t, tidyterra::aes(color = Cmmn_Nm)) +
+    ggplot2::xlim(terra::ext(all_sa)[1:2]) + ggplot2::ylim(terra::ext(all_sa)[3:4])
 
 all_sa %>%
-    ggplot() +
-    geom_spatvector() +
-    geom_spatvector(data = spo_tgs_t, aes(color = Cmmn_Nm)) +
-    xlim(ext(all_sa)[1:2]) + ylim(ext(all_sa)[3:4])
+    ggplot2::ggplot() +
+    tidyterra::geom_spatvector() +
+    tidyterra::geom_spatvector(data = mar_tgs_t, tidyterra::aes(color = Cmmn_Nm)) +
+    ggplot2::xlim(terra::ext(all_sa)[1:2]) + ggplot2::ylim(terra::ext(all_sa)[3:4])
 
 #------------------------------------------------------------------------------#
 ################# Load and clean environmental chelsa data #####################
 #------------------------------------------------------------------------------#
 # Load bioclim rasters
-chelsa_files <- list.files("Data/CHELSA_v2_1/", full.names = T)
-chelsa_bioclim <- rast(chelsa_files)
+chelsa_files <- list.files("NDP_Salamanders/Data/CHELSA_v2_1/", full.names = T)
+chelsa_bioclim <- terra::rast(chelsa_files)
 
 # Load NATSGO variables?
 # Do I need to resample NATSGO variables?
 
 # Crop datasetets to the combination of study areas to reduce speed costs
-chelsa_bioclim <- crop(chelsa_bioclim, all_sa)
-chelsa_bioclim <- mask(chelsa_bioclim, all_sa)
+chelsa_bioclim <- terra::crop(chelsa_bioclim, all_sa)
+chelsa_bioclim <- terra::mask(chelsa_bioclim, all_sa)
 #plot(chelsa_bioclim)
 
 #### Extract environmental values for occurrences
@@ -157,12 +157,12 @@ envdat <- data[, -1]
 # Loop should go through each environmental variable (bio)
 
 #### Create enmtools.species objects ####
-mar_et <- enmtools.species(range = mask(chelsa_bioclim, mar_sa), 
+mar_et <- ENMTools::enmtools.species(range = terra::mask(chelsa_bioclim, mar_sa), 
                            presence.points = mar, 
                            background.points = mar_tgs_t, 
                            species.name = "Marbled")
 
-spo_et <- enmtools.species(range = mask(chelsa_bioclim, spo_sa), 
+spo_et <- ENMTools::enmtools.species(range = terra::mask(chelsa_bioclim, spo_sa), 
                            presence.points = spo, 
                            background.points = spo_tgs_t, 
                            species.name = "Spotted")
@@ -177,21 +177,20 @@ for(i in 1:length(names(chelsa_bioclim))) {
 #options(java.parameters = "-Xmx36g") 
 
 #### Running maxent models ####
-mar_mx <- enmtools.maxent(mar_et, env = chelsa_bioclim[[i]], bg.source = "points")
-spo_mx <- enmtools.maxent(spo_et, env = chelsa_bioclim[[i]], bg.source = "points")
+mar_mx <- ENMTools::enmtools.maxent(mar_et, env = chelsa_bioclim[[i]], bg.source = "points")
+spo_mx <- ENMTools::enmtools.maxent(spo_et, env = chelsa_bioclim[[i]], bg.source = "points")
 
 #### Calculate D and I from maxent results ####
-mx_sim <- raster.overlap(mar_mx, spo_mx) %>% do.call(cbind, .)
+mx_sim <- raster.overlap(mar_mx, spo_mx) |> (\(x) do.call(rbind, x))()
 
 #### Calculate niche divergence plane indices from maxent response curves ####
 ndp_sim <- maxent_ndp(mx_sp1 = mar_mx, mx_sp2 = spo_mx, cut_off = 0.95)
 
-ind_res <- rbind(ind_res, cbind(ndp_sim$indices, mx_sim))
+ind_res <- rbind(ind_res, cbind(ndp_sim$indices, t(mx_sim)))
 plot_res <- rbind(plot_res, ndp_sim$response_curves)
 print(i)
 gc()
 }
 
 write.csv(ind_res, "Results/NDP_salamander_values2.csv", row.names = F)
-write_rds(plot_res, "Results/NDP_Salamanders_ResponseCurves2.rds")
-
+readr::write_rds(plot_res, "Results/NDP_Salamanders_ResponseCurves2.rds")
