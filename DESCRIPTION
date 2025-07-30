@@ -31,9 +31,5 @@ Imports:
     purrr,
     progress,
     sf,
-    maxnet,
-    ggrepel,
     grDevices,
-    stats,
-    tidyterra,
-    ENMTools
+    stats
