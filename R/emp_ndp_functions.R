@@ -27,12 +27,112 @@ create_sa <- function(occs, buffer = 1e5, bg_area = NULL) {
     }
     # Intersect buffers with background polygon
     sa <- terra::intersect(sa, bg_area)
-    if(terra::ngeom(sa) == 0) warning("Intersection result of buffer and bg_area is empty.")
+    if(nrow(sa) == 0) warning("Intersection result of buffer and bg_area is empty.")
   }
   
   return(sa)
 }
 
+#' Check if all SpatVectors have the same CRS
+#'
+#' @param svs list of SpatVectors
+#' @return logical TRUE if all have the same CRS, FALSE otherwise
+  same_crs <- function(svs) {
+    crs_list <- sapply(svs, function(x) terra::crs(x))
+    all(crs_list == crs_list[1])
+  }
+    
+#' Read and validate list of shapefiles containing points
+#'
+#' @param file_paths character vector of file paths to shapefiles
+#' @return list of SpatVectors with point geometries
+read_point_shapefiles <- function(file_paths) {
+  taxa_occs <- lapply(file_paths, function(fp) {
+    sv <- terra::vect(fp)
+    if(!terra::geomtype(sv) %in% c("points", "point")) {
+      stop(paste0("File '", fp, "' does not contain point geometries."))
+    }
+    sv
+  })
+  taxa_occs
+}
+
+#' Create study areas for multiple species occurrences
+#'
+#' @param occs_list list or SpatVector List of species occurrence spatial objects or a single SpatVector with a taxa/species identifier column
+#' @param buffer numeric Buffer distance in meters (default 100000 = 100 km)
+#' @param bg_area numeric Buffer distance in meters (default 100000 = 100 km)
+#' @param taxa_field character Name of the taxa/species identifier field in single SpatVector. Default NULL.
+#' @param desired_crs character EPSG code or CRS string to reproject all SpatVectors to (optional)
+#'
+#' @return named list of study area proxies for each species
+#' @export
+create_multi_sa <- function(occs_list, buffer = 1e5, bg_area = NULL, taxa_field = NULL, desired_crs = NULL) {
+
+  # If occs_list is a single SpatVector
+  if(inherits(occs_list, "SpatVector")) {
+    # If taxa_field is provided, split by taxa
+    if(!is.null(taxa_field)) {
+      if(!taxa_field %in% names(occs_list)) {
+        stop(paste0("Field '", taxa_field, "' not found in the SpatVector attributes."))
+      }
+      taxa_values <- unique(occs_list[[taxa_field]]) |> unlist()
+      # Create named list of SpatVectors by taxa
+      taxa_occs <- lapply(taxa_values, function(tv) {
+        occs_list[occs_list[[taxa_field]] == tv, ]
+      })
+      names(taxa_occs) <- taxa_values
+    } else {
+      # No taxa_field provided, run regular create_sa for the single SpatVector
+      sa <- create_sa(occs_list, buffer = buffer, bg_area = bg_area)
+      return(sa)
+    }
+  } else if(is.list(occs_list)) {
+    # Check if list elements are all SpatVectors
+    if(all(sapply(occs_list, inherits, what = "SpatVector"))) {
+      taxa_occs <- occs_list
+    } else if(all(sapply(occs_list, function(x) is.character(x) && file.exists(x)))) {
+      # Assume list of file paths, read the shapefiles
+      taxa_occs <- read_point_shapefiles(occs_list)
+    } else {
+      stop("Input list must consist of SpatVectors or paths to shapefiles containing points.")
+    }
+
+    # If list has no names, assign default names
+    if(is.null(names(taxa_occs))) {
+      names(taxa_occs) <- paste0("species_", seq_along(taxa_occs))
+    }
+
+    # Check projections, reproject as needed
+    if(!same_crs(taxa_occs)) {
+      if(is.null(desired_crs)) {
+        # Project all to CRS of first SpatVector
+        target_crs <- terra::crs(taxa_occs[[1]])
+      } else {
+        # Use user-provided CRS
+        target_crs <- desired_crs
+      }
+      taxa_occs <- lapply(taxa_occs, function(sv) {
+        if(terra::crs(sv) != target_crs) {
+          terra::project(sv, target_crs)
+        } else {
+          sv
+        }
+      })
+    }
+  } else {
+    # If not a SpatVector or list, run regular create_sa
+    sa <- create_sa(occs_list, buffer = buffer, bg_area = bg_area)
+    return(sa)
+  }
+
+  # Iterate over taxa_occs and create study areas
+  sa_list <- lapply(taxa_occs, function(sp_occs) {
+    create_sa(sp_occs, buffer = buffer, bg_area = bg_area)
+  })
+
+  return(sa_list)
+}
 
 #' Prepare background points with Target Group Species selection and thinning
 #'
