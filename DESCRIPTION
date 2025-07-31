@@ -13,6 +13,7 @@ Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Depends:
+    maxnet,
     R (>= 4.2.0)
 Imports: 
     dplyr,
@@ -32,4 +33,7 @@ Imports:
     progress,
     sf,
     grDevices,
-    stats
+    stats,
+    ENMTools,
+    glmnet,
+    zoo
