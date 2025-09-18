@@ -45,20 +45,9 @@ spo <- sal_thin |>
 #### Create study area around salamander occurrences ####
 #### There should be two study areas at the end (marbled vs spotted)
 
-# Create buffer
-mar_sa <- terra::buffer(mar, 1e5) #100 km buffer (10k meters) for study area
-spo_sa <- terra::buffer(spo, 1e5)
-
-# Union/aggregate of buffers
-mar_sa <- terra::aggregate(mar_sa)
-spo_sa <- terra::aggregate(spo_sa)
-
-# Intersect study areas with north american boundaries
-mar_sa <- terra::intersect(mar_sa, na)
-spo_sa <- terra::intersect(spo_sa, na)
-
 # Create "total study area" with the combination of both study areas to ease some later processes down the line
-all_sa <- terra::union(mar_sa, spo_sa) |> terra::aggregate()
+sal_sa <- create_multi_sa(occs_list = list(mar, spo), buffer = 1e+05, bg_area = na, desired_crs = "EPSG:4326")
+all_sa <- terra::union(sal_sa$species_1, sal_sa$species_2) |> terra::aggregate()
 
 all_sa |>
     ggplot2::ggplot() +

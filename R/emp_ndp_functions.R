@@ -199,6 +199,7 @@ extract_environmental_data <- function(ras, occ, bgp) {
 #'   - response_curves: combined trimmed response curves of the two species
 #'
 #' @importFrom pracma trapz
+#' @importFrom rlang .data
 #' @importFrom zoo na.approx
 #' @export
 maxent_ndp <- function(mx_sp1, mx_sp2, cut_off = 0.95) {
@@ -230,14 +231,14 @@ maxent_ndp <- function(mx_sp1, mx_sp2, cut_off = 0.95) {
   C <-
     A[A[, 1] >= min(B[, 1]) & A[, 1] <= max(B[, 1]), 1:3] |>
     dplyr::full_join(B[B[, 1] >= min(A[, 1]) & B[, 1] <= max(A[, 1]), 1:3], by = "layer") |>
-    dplyr::arrange(layer) |>
-    dplyr::mutate(value.x = zoo::na.approx(value.x, x = layer, na.rm = FALSE)) |>
-    dplyr::mutate(value.y = zoo::na.approx(value.y, x = layer, na.rm = FALSE)) |>
+    dplyr::arrange(.data$layer) |>
+    dplyr::mutate(value.x = zoo::na.approx(.data$value.x, x = layer, na.rm = FALSE)) |>
+    dplyr::mutate(value.y = zoo::na.approx(.data$value.y, x = layer, na.rm = FALSE)) |>
     dplyr::select(1, 2, 4) |>
     dplyr::filter(!is.na(value.x) & !is.na(value.y)) |>
     tidyr::pivot_longer(cols = 2:3, names_to = "source_curve", values_to = "y") |>
-    dplyr::group_by(layer) |>
-    dplyr::summarise(y = min(y))
+    dplyr::group_by(.data$layer) |>
+    dplyr::summarise(y = min(.data$y))
 
   # Calculate area
   NicheDiss <- 1 - (pracma::trapz(C[[1]], C[[2]]) / pracma::trapz(A[[1]], A[[2]]) +

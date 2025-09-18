@@ -12,7 +12,7 @@
 #' @details
 #' This version modifies the fitting process by adding unique presence samples to the background,
 #' setting controlled regularization adjustments, and calculating model entropy and penalty details.
-#'
+#' @import maxnet
 #' @importFrom glmnet glmnet glmnet.control
 #' @export
 maxnet2 <- function (p, data, f = maxnet.formula(p, data), regmult = 1, 
@@ -47,7 +47,7 @@ maxnet2 <- function (p, data, f = maxnet.formula(p, data), regmult = 1,
     bb <- model$beta[, 200]
     model$betas <- bb[bb != 0]
     model$alpha <- 0
-    rr <- predict.maxnet(model, data[p == 0, , drop = FALSE], 
+    rr <- stats::predict(model, data[p == 0, , drop = FALSE], 
         type = "exponent", clamp = FALSE)
     raw <- rr/sum(rr)
     model$entropy <- -sum(raw * log(raw))

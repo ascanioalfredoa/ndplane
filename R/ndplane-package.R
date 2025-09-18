@@ -6,6 +6,7 @@
 #' @importFrom grDevices png
 #' @importFrom rlang .data
 #' @importFrom stats complete.cases
+#' @importFrom stats model.matrix
 #' @importFrom utils combn
 ## usethis namespace: end
 NULL
