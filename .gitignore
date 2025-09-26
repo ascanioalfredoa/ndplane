@@ -9,3 +9,4 @@ Bhattacharyya/
 #NDP_Simulations/Results/full_sim_output_v1.csv
 #NDP_VirtualSpecies/output/vsp_sims_results.csv
 .vscode/settings.json
+R/thinning_functions

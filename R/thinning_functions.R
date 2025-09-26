@@ -9,7 +9,7 @@
 #' @return A matrix or data.frame of thinned coordinates (longitude, latitude).
 #' @export
 #' @family thinning
-thin_records <- function(x, thin.par, reps = 10) {
+old_thin_records <- function(x, thin.par, reps = 10) {
     if (inherits(x, "SpatVector")) {
         current_crs <- terra::crs(x, describe = TRUE)
         message("Input is a SpatVector. Current CRS: ", current_crs)
@@ -68,7 +68,7 @@ thin_records <- function(x, thin.par, reps = 10) {
 #' @return A data.frame of spatially thinned coordinates.
 #' @export
 #' @family thinning
-adaptive_thin <- function(coords, cellsize = 1, min_occ = 10, thin_par = 5, reps = 10) {
+old_adaptive_thin <- function(coords, cellsize = 1, min_occ = 10, thin_par = 5, reps = 10) {
     if (!inherits(coords, "sf")) {
         warning("Assuming input coordinates are in EPSG:4326 (WGS84).")
         sf_points <- sf::st_as_sf(coords, coords = c(1, 2), crs = 4326)
@@ -94,7 +94,7 @@ adaptive_thin <- function(coords, cellsize = 1, min_occ = 10, thin_par = 5, reps
             keep_all[[length(keep_all) + 1]] <- thinned
         } else if (length(idx) >= 1000) {
             sub_coords <- sf::st_coordinates(sf_points[idx, ])
-            recursive <- adaptive_thin(sub_coords, cellsize = cellsize / 2, thin_par = thin_par, reps = reps)
+            recursive <- old_adaptive_thin(sub_coords, cellsize = cellsize / 2, thin_par = thin_par, reps = reps)
             keep_all[[length(keep_all) + 1]] <- recursive
         } else if (length(idx) > 0) {
             keep_all[[length(keep_all) + 1]] <- sf::st_coordinates(sf_points[idx, ])
@@ -104,3 +104,5 @@ adaptive_thin <- function(coords, cellsize = 1, min_occ = 10, thin_par = 5, reps
 
     return(do.call(rbind, keep_all))
 }
+
+
