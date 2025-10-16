@@ -144,7 +144,7 @@ gridify_int <- function(p, cellsize = 10) {
 gridify <- function(p, cs = NULL) {
     if(is.null(cs)) {
         p_ext <- terra::ext(p)
-        cs <- round(min(abs(p_ext[1] - p_ext[2]), abs(p_ext[3] - p_ext[4])))/2
+        cs <- round(min(abs(p_ext[1] - p_ext[2]), abs(p_ext[3] - p_ext[4])), 3)/2
     }
     A <- gridify_int(p, cellsize = cs)
     print(sort(table(A$Index), decreasing = T))
@@ -185,7 +185,7 @@ gridify <- function(p, cs = NULL) {
 gridify_thin <- function(p, cs = NULL, thin.par = 10, reps = 10) {
     if(is.null(cs)) {
         p_ext <- ext(p)
-        cs <- round(min(abs(p_ext[1] - p_ext[2]), abs(p_ext[3] - p_ext[4])), 1)/2
+        cs <- round(min(abs(p_ext[1] - p_ext[2]), abs(p_ext[3] - p_ext[4])), 3)/2
     }
     A <- gridify_int(p, cellsize = cs)
     print("gridify_int done")
