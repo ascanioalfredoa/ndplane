@@ -10,7 +10,7 @@ status](https://www.r-pkg.org/badges/version/ndplane)](https://CRAN.R-project.or
 [![R-CMD-check](https://github.com/ascanioalfredoa/ndplane/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ascanioalfredoa/ndplane/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-The goal of _ndplane_ is to 
+The package _ndplane_ enables users the application of methods to calculate two new indices related to Ecological Niche Divergence/Differentiation, in a way that allows the separation of different patterns of ecological niche divergence. These methods are outlined in: [Ascanio, A., Bracken, J. T., Stevens, M. H. H., & Jezkova, T. (2024). New theoretical and analytical framework for quantifying and classifying ecological niche differentiation. Ecological Monographs, 94(4), e1622.](https://esajournals.onlinelibrary.wiley.com/doi/abs/10.1002/ecm.1622) 
 
 ## Installation
 
@@ -22,11 +22,5 @@ You can install the development version of ndplane from
 pak::pak("ascanioalfredoa/ndplane")
 ```
 
-## Example
-
-This is a basic example which shows you how to solve a common problem:
-
-``` r
-library(ndplane)
-## basic example code
-```
+# UNDER CONSTRUCTION 
+## Plase visit us by mid summer 2026
