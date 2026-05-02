@@ -1,6 +1,6 @@
 Package: ndplane
 Title: Creates Niche Divergence Plane And Other Analyses
-Version: 0.0.0.9000
+Version: 0.1.0
 Authors@R: 
     person("Alfredo", "Ascanio", , "ascanio.alfredoa@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-9987-7977"))
@@ -10,35 +10,18 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Suggests: 
-    testthat (>= 3.0.0)
-Config/testthat/edition: 3
+    testthat (>= 3.0.0),
+    knitr,
+    rmarkdown,
+    pkgdown
+VignetteBuilder: knitr
 Depends:
-    maxnet,
     R (>= 4.2.0)
 Imports: 
-    dplyr,
-    furrr,
-    future,
-    pracma,
-    progressr,
-    readr,
-    rlang,
-    terra,
-    tibble,
-    tidyr,
-    utils,
-    virtualspecies,
-    ggplot2,
-    purrr,
-    progress,
-    sf,
-    grDevices,
-    stats,
-    ENMTools,
     glmnet,
-    zoo,
-    cowplot,
-    forcats,
-    ggpubr,
-    ggrepel,
-    gridExtra
+    maxnet,
+    stats,
+    graphics,
+    grDevices,
+    utils,
+    terra
