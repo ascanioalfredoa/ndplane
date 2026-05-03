@@ -9,7 +9,7 @@ glmnet_mx(
   data,
   f,
   regmult = 1,
-  regfun = maxnet::maxnet.default.regularization,
+  regfun = default_regularization,
   addsamplestobackground = TRUE,
   weights = NULL,
   ...

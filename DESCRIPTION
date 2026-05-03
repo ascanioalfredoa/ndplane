@@ -13,13 +13,13 @@ Suggests:
     testthat (>= 3.0.0),
     knitr,
     rmarkdown,
-    pkgdown
+    pkgdown,
+    maxnet
 VignetteBuilder: knitr
 Depends:
     R (>= 4.2.0)
 Imports: 
     glmnet,
-    maxnet,
     stats,
     graphics,
     grDevices,

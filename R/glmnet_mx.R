@@ -1,3 +1,55 @@
+#' Default Regularization for Maxent-like Models
+#'
+#' @param p Presence/background vector
+#' @param m Model matrix
+#' @export
+default_regularization <- function(p, m) {
+    isproduct <- function(x) grepl(":", x) & !grepl("\\(", x)
+    isquadratic <- function(x) grepl("^I\\(.*\\^2\\)", x)
+    ishinge <- function(x) grepl("^hinge\\(", x)
+    isthreshold <- function(x) grepl("^thresholds\\(", x)
+    iscategorical <- function(x) grepl("^categorical\\(", x)
+    regtable <- function(name, default) {
+        if (ishinge(name))
+            return(list(c(0, 1), c(0.5, 0.5)))
+        if (iscategorical(name))
+            return(list(c(0, 10, 17), c(0.65, 0.5, 0.25)))
+        if (isthreshold(name))
+            return(list(c(0, 100), c(2, 1)))
+        default
+    }
+    lregtable <- list(c(0, 10, 30, 100), c(1, 1, 0.2, 0.05))
+    qregtable <- list(c(0, 10, 17, 30, 100), c(1.3, 0.8, 0.5,
+        0.25, 0.05))
+    pregtable <- list(c(0, 10, 17, 30, 100), c(2.6, 1.6, 0.9,
+        0.55, 0.05))
+    mm <- m[p == 1, , drop = FALSE]
+    np <- nrow(mm)
+    lqpreg <- lregtable
+    if (sum(isquadratic(colnames(mm))))
+        lqpreg <- qregtable
+    if (sum(isproduct(colnames(mm))))
+        lqpreg <- pregtable
+    classregularization <- sapply(colnames(mm), function(n) {
+        t <- regtable(n, lqpreg)
+        stats::approx(t[[1]], t[[2]], np, rule = 2)$y
+    })/sqrt(np)
+    ishinge_vec <- grepl("^hinge\\(", colnames(mm))
+    hmindev <- sapply(1:ncol(mm), function(i) {
+        if (!ishinge_vec[i])
+            return(0)
+        avg <- mean(mm[, i])
+        std <- max(stats::sd(mm[, i]), 1/sqrt(np))
+        std * 0.5/sqrt(np)
+    })
+    tmindev <- sapply(1:ncol(mm), function(i) {
+        ifelse(isthreshold(colnames(mm)[i]) && (sum(mm[, i]) ==
+            0 || sum(mm[, i]) == nrow(mm)), 1, 0)
+    })
+    pmax(0.001 * (apply(m, 2, max) - apply(m, 2, min)), hmindev,
+        tmindev, apply(as.matrix(mm), 2, stats::sd) * classregularization)
+}
+
 #' Predict method for glmnet_mx objects
 #'
 #' @param object A glmnet_mx model object
@@ -7,7 +59,18 @@
 #' @param ... Additional arguments
 #' @export
 predict.glmnet_mx <- function(object, newdata, type = c("link", "response", "exponent", "cloglog"), clamp = TRUE, ...) {
+  # If type is not one of our custom types, delegate to glmnet's predict method
+  if (!missing(type) && !type %in% c("link", "response", "exponent", "cloglog")) {
+    class(object) <- setdiff(class(object), "glmnet_mx")
+    return(stats::predict(object, type = type, ...))
+  }
+
   type <- match.arg(type)
+
+  if (missing(newdata) || is.null(newdata)) {
+    class(object) <- setdiff(class(object), "glmnet_mx")
+    return(stats::predict(object, type = type, ...))
+  }
 
   if (clamp) {
     for (v in names(object$varmin)) {
@@ -21,7 +84,6 @@ predict.glmnet_mx <- function(object, newdata, type = c("link", "response", "exp
   f <- object$formula
   mm <- model.matrix(f, newdata)
 
-  # Use NextMethod or direct call to avoid infinite recursion
   class(object) <- setdiff(class(object), "glmnet_mx")
   res <- stats::predict(object, newx = mm, s = object$lambda[200], type = "link")[, 1]
   res <- res + object$alpha
@@ -48,7 +110,7 @@ glmnet_mx <- function(p,
                       data,
                       f,
                       regmult = 1.0,
-                      regfun = maxnet::maxnet.default.regularization,
+                      regfun = default_regularization,
                       addsamplestobackground = TRUE,
                       weights = NULL,
                       ...) {
@@ -97,7 +159,6 @@ glmnet_mx <- function(p,
   model$varmin <- apply(data, 2, function(x) if(is.numeric(x)) min(x) else NA)
   model$varmax <- apply(data, 2, function(x) if(is.numeric(x)) max(x) else NA)
 
-  # Store sample means for response curves
   numeric_vars <- sapply(data, is.numeric)
   model$samplemeans <- colMeans(data[p == 1, numeric_vars, drop = FALSE])
 
