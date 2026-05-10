@@ -59,17 +59,15 @@ default_regularization <- function(p, m) {
 #' @param ... Additional arguments
 #' @export
 predict.glmnet_mx <- function(object, newdata, type = c("link", "response", "exponent", "cloglog"), clamp = TRUE, ...) {
-  # If type is not one of our custom types, delegate to glmnet's predict method
+  # If type is not one of our custom types, delegate to next method (glmnet)
   if (!missing(type) && !type %in% c("link", "response", "exponent", "cloglog")) {
-    class(object) <- setdiff(class(object), "glmnet_mx")
-    return(stats::predict(object, type = type, ...))
+    return(NextMethod("predict"))
   }
 
   type <- match.arg(type)
 
   if (missing(newdata) || is.null(newdata)) {
-    class(object) <- setdiff(class(object), "glmnet_mx")
-    return(stats::predict(object, type = type, ...))
+    return(NextMethod("predict"))
   }
 
   if (clamp) {
@@ -84,7 +82,6 @@ predict.glmnet_mx <- function(object, newdata, type = c("link", "response", "exp
   f <- object$formula
   mm <- model.matrix(f, newdata)
 
-  class(object) <- setdiff(class(object), "glmnet_mx")
   res <- stats::predict(object, newx = mm, s = object$lambda[200], type = "link")[, 1]
   res <- res + object$alpha
 
