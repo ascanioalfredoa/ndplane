@@ -1,0 +1,77 @@
+---
+title: "Tutorial 1: Basic Niche Divergence Plane Analysis"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Tutorial 1: Basic Niche Divergence Plane Analysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(ndplane)
+```
+
+## Introduction
+
+This tutorial demonstrates the basic workflow for calculating the Niche Divergence Plane (NDP) indices using Maxent-like models fitted via `glmnet_mx`.
+
+## Data Preparation
+
+We will use some synthetic data for two species across two environmental variables.
+
+```{r data}
+set.seed(123)
+n <- 200
+env1 <- runif(n, 0, 100)
+env2 <- runif(n, 0, 100)
+data_env <- data.frame(env1 = env1, env2 = env2)
+
+# Species A prefers low env1
+p_a <- ifelse(env1 < 40, 0.8, 0.1)
+occ_a <- rbinom(n, 1, p_a)
+data_a <- cbind(p = occ_a, data_env)
+
+# Species B prefers high env1
+p_b <- ifelse(env1 > 60, 0.8, 0.1)
+occ_b <- rbinom(n, 1, p_b)
+data_b <- cbind(p = occ_b, data_env)
+```
+
+## Modeling with `glmnet_mx`
+
+We fit Maxent-like models for each species.
+
+```{r modeling}
+form <- ~ env1 + env2 + I(env1^2) + I(env2^2)
+model_a <- glmnet_mx(data_a$p, data_a[, c("env1", "env2")], form)
+model_b <- glmnet_mx(data_b$p, data_b[, c("env1", "env2")], form)
+```
+
+## Extracting Response Curves
+
+```{r response_curves}
+rc_a_env1 <- get_response_curve(model_a, "env1")
+rc_b_env1 <- get_response_curve(model_b, "env1")
+
+plot_response_curves(rc_a_env1, rc_b_env1, main = "Response to env1", xlab = "env1")
+```
+
+## Calculating NDP Indices
+
+```{r ndp}
+ov <- beta_overlap(rc_a_env1, rc_b_env1)
+diss <- niche_diss(rc_a_env1, rc_b_env1, ov)
+excl <- niche_excl(rc_a_env1, rc_b_env1)
+
+indices <- data.frame(variable = "env1", dissimilarity = diss, exclusivity = excl)
+print(indices)
+
+plot_ndp(indices, labels = indices$variable)
+```

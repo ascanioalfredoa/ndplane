@@ -1,4 +1,4 @@
-#' Determines response overlap between two beta function curves from betaPDF()
+#' Determines response overlap between two beta function curves
 #'
 #' @param spa Data frame containing x and y values for Species A response
 #' @param spb Data frame containing x and y values for Species B response
@@ -11,13 +11,18 @@
 #' spb <- betaPDF(a = 0, b = 1, alpha = 1, gamma = 3)
 #' beta_overlap(spa, spb)
 beta_overlap <- function(spa, spb) {
-    ov <-
-        spa[spa[, 1] %in% spb[, 1], ] |>
-        dplyr::left_join(spb[spb[, 1] %in% spb[, 1], ], by = "x", suffix = c("_a", "_b")) |>
-        tidyr::pivot_longer(cols = 2:3, names_to = "source_curve", values_to = "y") |>
-        dplyr::group_by(.data$x) |>
-        dplyr::summarise(y = min(.data$y))
-    ov
+  # Merge spa and spb by x using base R merge
+  merged <- merge(spa, spb, by = "x", suffixes = c("_a", "_b"))
+
+  if (nrow(merged) == 0) {
+    return(data.frame(x = numeric(0), y = numeric(0)))
+  }
+
+  # Calculate minimum y for each x
+  merged$y <- pmin(merged$y_a, merged$y_b)
+
+  # Return data frame with x and y
+  merged[, c("x", "y")]
 }
 
 #' Calculate Niche Dissimilarity Index for the Niche Divergence Plane
@@ -35,7 +40,13 @@ beta_overlap <- function(spa, spb) {
 #' ov <- beta_overlap(spa, spb)
 #' niche_diss(spa, spb, ov)
 niche_diss <- function(spa, spb, ov) {
-    1 - (pracma::trapz(ov[[1]], ov[[2]])/pracma::trapz(spa[[1]], spa[[2]]) + pracma::trapz(ov[[1]], ov[[2]])/pracma::trapz(spb[[1]], spb[[2]]))/2
+  if (nrow(ov) < 2) return(1)
+
+  area_ov <- trapz(ov$x, ov$y)
+  area_a <- trapz(spa$x, spa$y)
+  area_b <- trapz(spb$x, spb$y)
+
+  1 - (area_ov / area_a + area_ov / area_b) / 2
 }
 
 #' Calculate Niche Exclusivity Index for the Niche Divergence Plane
@@ -51,8 +62,22 @@ niche_diss <- function(spa, spb, ov) {
 #' spb <- betaPDF(a = 0, b = 1, alpha = 1, gamma = 3)
 #' niche_excl(spa, spb)
 niche_excl <- function(spa, spb) {
-    excl <- 1 - (min(c(max(spa[, 1]), max(spb[, 1]))) - max(c(min(spa[, 1]), min(spb[, 1]))))/(max(c(max(spa[, 1]), max(spb[, 1]))) - min(c(min(spa[, 1]), min(spb[, 1]))))
+    min_a <- min(spa$x)
+    max_a <- max(spa$x)
+    min_b <- min(spb$x)
+    max_b <- max(spb$x)
+
+    overlap_min <- max(min_a, min_b)
+    overlap_max <- min(max_a, max_b)
+
+    total_min <- min(min_a, min_b)
+    total_max <- max(max_a, max_b)
+
+    overlap_width <- max(0, overlap_max - overlap_min)
+    total_width <- total_max - total_min
+
+    excl <- 1 - (overlap_width / total_width)
     if(excl > 1) excl <- 1
+    if(excl < 0) excl <- 0
     excl
 }
-

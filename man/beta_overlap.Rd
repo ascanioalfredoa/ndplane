@@ -2,7 +2,7 @@
 % Please edit documentation in R/nichedivergence.R
 \name{beta_overlap}
 \alias{beta_overlap}
-\title{Determines response overlap between two beta function curves from betaPDF()}
+\title{Determines response overlap between two beta function curves}
 \usage{
 beta_overlap(spa, spb)
 }
@@ -15,7 +15,7 @@ beta_overlap(spa, spb)
 Data frame containing x and y values for the overlap curve between species A and B
 }
 \description{
-Determines response overlap between two beta function curves from betaPDF()
+Determines response overlap between two beta function curves
 }
 \examples{
 spa <- betaPDF(a = 0, b = 1, alpha = 3, gamma = 1)

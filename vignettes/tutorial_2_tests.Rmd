@@ -1,0 +1,70 @@
+---
+title: "Tutorial 2: Bootstrap and Permutation Tests"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Tutorial 2: Bootstrap and Permutation Tests}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(ndplane)
+```
+
+## Introduction
+
+This tutorial covers how to perform bootstrap and permutation tests to assess the uncertainty and significance of Niche Divergence Plane results.
+
+## Setup Data
+
+```{r data}
+set.seed(456)
+n <- 200
+env1 <- runif(n, 0, 100)
+env2 <- runif(n, 0, 100)
+data_env <- data.frame(env1 = env1, env2 = env2)
+
+# Species A
+p_a <- ifelse(env1 < 50, 0.7, 0.2)
+occ_a <- rbinom(n, 1, p_a)
+data_a <- cbind(p = occ_a, data_env)
+
+# Species B (similar to A, for testing null)
+p_b <- ifelse(env1 < 55, 0.7, 0.2)
+occ_b <- rbinom(n, 1, p_b)
+data_b <- cbind(p = occ_b, data_env)
+```
+
+## Bootstrap Cloud
+
+The bootstrap test helps visualize the uncertainty in our index estimates.
+
+```{r bootstrap, message=FALSE, warning=FALSE}
+form <- ~ env1 + env2
+variables <- c("env1", "env2")
+
+boot_res <- ndp_bootstrap(data_a, data_b, form, variables, n_iter = 20)
+
+# Plotting the cloud for env1
+boot_env1 <- boot_res[boot_res$variable == "env1", ]
+plot_ndp(boot_env1, main = "Bootstrap Cloud (env1)")
+```
+
+## Permutation Test
+
+The permutation test evaluates the null hypothesis that there is no difference between the two species' niches.
+
+```{r permutation, message=FALSE, warning=FALSE}
+perm_res <- ndp_permutation(data_a, data_b, form, variables, n_iter = 20)
+
+# Observe the distribution of null results
+perm_env1 <- perm_res[perm_res$variable == "env1", ]
+plot_ndp(perm_env1, main = "Permutation Null Distribution (env1)")
+```
